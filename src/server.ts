@@ -1,23 +1,11 @@
-import { ApolloServer, gql } from "apollo-server"
-import dotenv from "dotenv"
-
 // Load environment variables from .env file
+import "reflect-metadata"
+import dotenv from "dotenv"
 dotenv.config()
+import { ApolloServer } from "apollo-server"
+import schema from "./graphql/schema"
 
-// Construct a schema, using GraphQL schema language
-const typeDefs = gql`
-	type Query {
-		hello: String
-	}
-`
-
-// Provide resolver functions for your schema fields
-const resolvers = {
-	Query: {
-		hello: () => "Hello world!"
-	}
-}
-
-const server = new ApolloServer({ typeDefs, resolvers })
-
+const server = new ApolloServer({
+	schema
+})
 server.listen().then(({ url }) => console.log(`🚀 Server ready at ${url}`))
