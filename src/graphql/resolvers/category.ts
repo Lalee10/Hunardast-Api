@@ -1,9 +1,9 @@
-import { ApolloError } from "apollo-server"
-import { ObjectType, Field, ID, Query, Mutation, Arg } from "type-graphql"
-import db from "../../models"
+import { ApolloError } from "apollo-server-express"
+import { ObjectType, Field, ID, Query, Mutation, Arg, Ctx, Resolver } from "type-graphql"
+import CoreDatabase from "../../models/interface"
 
 @ObjectType()
-class CategoryType {
+class Category {
 	@Field(type => ID)
 	_id: string
 
@@ -17,52 +17,51 @@ class CategoryType {
 	updatedAt: Date
 }
 
+@Resolver(Category)
 class CategoryResolver {
-	@Query(returns => [CategoryType]!)
-	async categories() {
-		try {
-			return await db.Category.find()
-		} catch (error) {
-			throw error
-		}
+	@Query(returns => Category, { nullable: true })
+	async category(
+		@Ctx("db") db: CoreDatabase,
+		@Arg("id", { nullable: true }) id?: string,
+		@Arg("name", { nullable: true }) name?: string
+	): Promise<Category | null> {
+		return await db.Category.findOne({ $or: [{ _id: id }, { name: name }] })
 	}
 
-	@Mutation(returns => CategoryType)
-	async addCategory(@Arg("name") name: string): Promise<CategoryType> {
-		try {
-			return await db.Category.create({ name })
-		} catch (error) {
-			throw error
-		}
+	@Query(returns => [Category])
+	async categories(@Ctx("db") db: CoreDatabase): Promise<Category[]> {
+		return await db.Category.find()
 	}
 
-	@Mutation(returns => CategoryType || null)
-	async updateCategory(@Arg("id") id: string, @Arg("newName") newName: string): Promise<CategoryType | null> {
-		try {
-			const category = await db.Category.findById(id)
+	@Mutation(returns => Category)
+	async addCategory(@Arg("name") name: string, @Ctx("db") db: CoreDatabase): Promise<Category> {
+		return await db.Category.create({ name })
+	}
 
-			if (!category) {
-				throw new ApolloError("No category with this key found")
-			} else if (category.name === newName) {
-				return category
-			} else {
-				await category.updateOne({ name: newName })
-				return await db.Category.findById(id)
-			}
-		} catch (error) {
-			throw error
+	@Mutation(returns => Category)
+	async updateCategory(
+		@Arg("id") id: string,
+		@Arg("newName") newName: string,
+		@Ctx("db") db: CoreDatabase
+	): Promise<Category | null> {
+		const category = await db.Category.findById(id)
+		const oldName = category?.name
+
+		if (!category) {
+			throw new ApolloError("No category with this key found")
+		} else if (oldName === newName) {
+			return category
+		} else {
+			await category.updateOne({ name: newName })
+			return await db.Category.findById(id)
 		}
 	}
 
 	@Mutation(returns => String)
-	async deleteCategory(@Arg("id") id: string): Promise<string> {
-		try {
-			// TODO: check if a product belongs to this category before deletion
-			await db.Category.deleteOne({ _id: id })
-			return id
-		} catch (error) {
-			throw error
-		}
+	async deleteCategory(@Arg("id") id: string, @Ctx("db") db: CoreDatabase): Promise<string> {
+		// TODO: check if a product belongs to this category before deletion
+		await db.Category.deleteOne({ _id: id })
+		return id
 	}
 }
 

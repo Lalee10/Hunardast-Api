@@ -1,5 +1,4 @@
 import { ObjectType, Field, ID, Resolver, Query, Arg, Mutation } from "type-graphql"
-import db from "../../models"
 
 // Class for Type-GraphQL usage
 @ObjectType()
@@ -15,6 +14,12 @@ export class User {
 
 	@Field()
 	email: string
+
+	@Field()
+	createdAt: Date
+
+	@Field()
+	updatedAt: Date
 }
 
 @Resolver(User)

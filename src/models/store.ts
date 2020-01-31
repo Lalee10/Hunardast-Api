@@ -1,16 +1,6 @@
 import { Schema, Document } from "mongoose"
-import { IUser } from "./user"
 
 const { ObjectId } = Schema.Types
-
-export interface IStore extends Document {
-	name: string
-	location?: string
-	description?: string
-	manager: IUser["_id"]
-	createdAt: string
-	updatedAt: string
-}
 
 const storeSchema: Schema = new Schema(
 	{

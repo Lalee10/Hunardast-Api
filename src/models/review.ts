@@ -1,20 +1,10 @@
-import { Schema, Document } from "mongoose"
-import { IUser } from "./user"
-
-export interface IReview extends Document {
-	reviewer: IUser["_id"]
-	rating: number
-	review: string
-	editCount: number
-	createdAt: Date
-	updatedAt: Date
-}
+import { Schema } from "mongoose"
 
 const { ObjectId } = Schema.Types
 
-export const reviewSchema = new Schema(
+export const reviewSchema: Schema = new Schema(
 	{
-		reviewer: { type: ObjectId, ref: "User" },
+		reviewer: { type: ObjectId, ref: "User", required: true },
 		rating: { type: Number, required: true },
 		review: { type: String, required: true },
 		editCount: { type: Number, default: 0 }

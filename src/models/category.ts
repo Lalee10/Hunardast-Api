@@ -1,14 +1,8 @@
-import { Schema, Document } from "mongoose"
-
-export interface ICategory extends Document {
-	name: string
-	createdAt: Date
-	updatedAt: Date
-}
+import { Schema } from "mongoose"
 
 export const categorySchema: Schema = new Schema(
 	{
-		name: { type: String, unique: true, required: true }
+		name: { type: String, required: true, unique: true }
 	},
 	{ timestamps: true }
 )
