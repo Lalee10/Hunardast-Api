@@ -1,6 +1,15 @@
-import { Schema } from "mongoose"
+import { Schema, Document } from "mongoose"
+import { Timestamp } from "./interface"
+import { IUser } from "./user"
 
 const { ObjectId } = Schema.Types
+
+export interface IReview extends Document, Timestamp {
+	reviewer: IUser["_id"]
+	rating: number
+	review: string
+	editCount: number
+}
 
 export const reviewSchema: Schema = new Schema(
 	{

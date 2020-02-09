@@ -1,5 +1,5 @@
 import mongoose, { Connection } from "mongoose"
-import CoreDatabase from "./interface"
+import { CoreDatabase } from "./interface"
 import categorySchema from "./category"
 import userSchema from "./user"
 import productSchema from "./product"

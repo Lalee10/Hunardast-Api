@@ -1,4 +1,5 @@
-import { ObjectType, Field, ID, Resolver, Query, Arg, Mutation } from "type-graphql"
+import { ObjectType, Field, ID, Resolver, Query, Arg, Ctx } from "type-graphql"
+import { CoreDatabase } from "../../models/interface"
 
 // Class for Type-GraphQL usage
 @ObjectType()
@@ -7,13 +8,13 @@ export class User {
 	_id: string
 
 	@Field({ description: "The user_id registered with auth0" })
-	auth0_id: string
+	authzId: string
 
 	@Field()
 	name: string
 
-	@Field()
-	email: string
+	@Field(type => [String], { nullable: "items" })
+	perms: [string]
 
 	@Field()
 	createdAt: Date
@@ -23,4 +24,22 @@ export class User {
 }
 
 @Resolver(User)
-export class UserResolver {}
+export class UserResolver {
+	@Query(returns => User, { nullable: true })
+	async user(
+		@Ctx("db") db: CoreDatabase,
+		@Ctx("user") user: Promise<unknown>
+		// @Arg("_id", { nullable: true }) _id?: string,
+		// @Arg("authzId", { nullable: true }) authzId?: string,
+		// @Arg("email", { nullable: true }) email?: string
+	): Promise<User | null> {
+		const ctxAuthzId: any = await user
+
+		// If no user token found return null
+		if (!ctxAuthzId) return null
+
+		const dbUser = await db.User.findOne({ authzId: ctxAuthzId })
+	}
+}
+
+export default UserResolver

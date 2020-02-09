@@ -1,9 +1,9 @@
 import { GraphQLSchema } from "graphql"
 import { buildSchemaSync } from "type-graphql"
-import { CategoryResolver } from "./resolvers"
+import { CategoryResolver, UserResolver } from "./resolvers"
 
 const schema: GraphQLSchema = buildSchemaSync({
-	resolvers: [CategoryResolver],
+	resolvers: [CategoryResolver, UserResolver],
 	emitSchemaFile: true
 })
 
