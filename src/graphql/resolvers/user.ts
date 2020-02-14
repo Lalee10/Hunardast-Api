@@ -7,14 +7,13 @@ export class User {
 	@Field(type => ID)
 	_id: string
 
-	@Field({ description: "The user_id registered with auth0" })
-	authzId: string
+	@Field()
+	email: string
 
 	@Field()
 	name: string
 
-	@Field(type => [String], { nullable: "items" })
-	perms: [string]
+	password: string
 
 	@Field()
 	createdAt: Date

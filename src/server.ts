@@ -5,29 +5,23 @@ import { ApolloServer } from "apollo-server-express"
 import app from "./app"
 import schema from "./graphql/schema"
 import { getDb } from "./models"
-import { getUserPromise } from "./middlewares/auth"
-import { CoreDatabase } from "./models/interface"
-
-interface ApolloContext {
-	db: CoreDatabase
-	user: Promise<string | null>
-}
+import { ApolloContext } from "./models/interface"
+import { verifyToken } from "./controllers/auth"
 
 const server = new ApolloServer({
 	schema,
 	formatError: error => {
-		console.log(error)
+		console.log("Error: ", error)
 
 		return error
 	},
 	context: ({ req, res }): ApolloContext => {
-		const token = req.headers.authorization?.split(" ")[1] || ""
-		const user = getUserPromise(token)
+		const db = getDb()
+		const token = req.cookies["authToken"]
+		console.log("Token: ", token)
+		const userId = verifyToken(token)
 
-		return {
-			db: getDb(),
-			user: user
-		}
+		return { req, res, db, userId }
 	}
 })
 

@@ -1,17 +1,26 @@
 import express from "express"
 import morgan from "morgan"
-import cors from "cors"
+import cors, { CorsOptions } from "cors"
+import cookieParser from "cookie-parser"
 
 const app = express()
 
-app.use(cors())
+const whitelist = ["http://localhost:4000", "http://localhost:3000", "http://hunardast.com", "https://hunardast.com"]
+
+const corsOptions: CorsOptions = {
+	origin: function(origin, callback) {
+		if (whitelist.includes(`${origin}`) || !origin) {
+			callback(null, true)
+		} else {
+			callback(new Error("Not allowed by CORS"))
+		}
+	},
+	credentials: true
+}
+
+app.use(cors(corsOptions))
+app.use(cookieParser())
 app.use(express.json())
 app.use(morgan("dev"))
-
-app.use(function(req, res, next) {
-	res.header("Access-Control-Allow-Origin", "*")
-	res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept")
-	next()
-})
 
 export default app

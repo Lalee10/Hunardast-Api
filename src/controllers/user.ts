@@ -9,7 +9,7 @@ import { IUser } from "../models/user"
  */
 const createUser = async (Model: Model<IUser>, newUser: IUser): Promise<IUser> => {
 	// Find a user with a similar authz Id
-	let user = await Model.findOne({ authzId: newUser.authzId })
+	let user = await Model.findOne({ email: newUser.email })
 
 	// If user doesn't exist then create a new one with the data provided
 	if (!user) user = await Model.create(newUser)
