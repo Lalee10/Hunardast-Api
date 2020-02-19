@@ -1,7 +1,7 @@
 import bcrypt from "bcrypt"
 import { Response } from "express"
 import { ApolloError } from "apollo-server-express"
-import { Resolver, Query, Arg, Ctx, Mutation, Field, ObjectType } from "type-graphql"
+import { Resolver, Query, Arg, Ctx, Mutation } from "type-graphql"
 import { CoreDatabase } from "../../models/interface"
 import { User } from "./user"
 import { validateEmail, getToken, setCookie } from "../../controllers/auth"
@@ -9,19 +9,10 @@ import { validateEmail, getToken, setCookie } from "../../controllers/auth"
 export class UnauthorizedError extends Error {
 	statusCode: number
 
-	constructor(statusCode = 401, message = "User authentication required but failed") {
+	constructor(statusCode = 401, message = "Invalid Token. Authentication Failed!") {
 		super(message)
 		this.statusCode = statusCode
 	}
-}
-
-@ObjectType()
-abstract class AuthResponse {
-	@Field(type => User)
-	user: User
-
-	@Field()
-	token: string
 }
 
 @Resolver()
@@ -32,12 +23,7 @@ class AuthResolver {
 	}
 
 	@Query(returns => User, { nullable: true })
-	async verifyUser(
-		@Arg("required") required: boolean,
-		@Ctx("userId") userId: string,
-		@Ctx("db") db: CoreDatabase,
-		@Ctx("res") res: Response
-	) {
+	async verifyUser(@Arg("required") required: boolean, @Ctx("userId") userId: string, @Ctx("db") db: CoreDatabase) {
 		if (required && !userId) {
 			throw new UnauthorizedError()
 		} else if (!userId) {
@@ -47,7 +33,7 @@ class AuthResolver {
 		}
 	}
 
-	@Mutation(returns => AuthResponse)
+	@Mutation(returns => User)
 	async loginUser(
 		@Arg("email") email: string,
 		@Arg("password") password: string,
@@ -67,10 +53,10 @@ class AuthResolver {
 		const token = getToken(user)
 		setCookie(res, token, "authToken")
 
-		return { user, token }
+		return user
 	}
 
-	@Mutation(returns => AuthResponse)
+	@Mutation(returns => User)
 	async registerUser(
 		@Arg("name") name: string,
 		@Arg("email") email: string,
@@ -91,7 +77,7 @@ class AuthResolver {
 		const token = getToken(user)
 		setCookie(res, token, "authToken")
 
-		return { user, token }
+		return user
 	}
 }
 

@@ -18,7 +18,6 @@ const server = new ApolloServer({
 	context: ({ req, res }): ApolloContext => {
 		const db = getDb()
 		const token = req.cookies["authToken"]
-		console.log("Token: ", token)
 		const userId = verifyToken(token)
 
 		return { req, res, db, userId }

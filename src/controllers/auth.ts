@@ -31,19 +31,18 @@ export function getToken(user: IUser) {
 
 export function setCookie(res: Response, token: string, name: string) {
 	res.cookie(name, token, {
-		httpOnly: true,
 		secure: process.env.NODE_ENV === "production",
-		maxAge: 1000 * 60 * 2
+		maxAge: 1000 * 60 * 60 * 24 * 2
 	})
 }
 
 export function verifyToken(token: string) {
 	try {
-		const decoded = jwt.verify(token, secretKey, { audience: "https://api.hunardast.com" })
+		const decoded = jwt.verify(token, secretKey)
 		if (typeof decoded === "object") {
 			return decoded["_id"]
 		} else {
-			throw "Invalid authentication token in request"
+			return null
 		}
 	} catch (error) {
 		return null
