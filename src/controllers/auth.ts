@@ -31,6 +31,7 @@ export function getToken(user: IUser) {
 
 export function setCookie(res: Response, token: string, name: string) {
 	res.cookie(name, token, {
+		httpOnly: true,
 		secure: process.env.NODE_ENV === "production",
 		maxAge: 1000 * 60 * 60 * 24 * 2
 	})
