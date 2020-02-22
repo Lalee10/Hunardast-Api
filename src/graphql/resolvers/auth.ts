@@ -6,6 +6,8 @@ import { CoreDatabase } from "../../models/interface"
 import { User } from "./user"
 import { validateEmail, getToken, setCookie } from "../../controllers/auth"
 
+const authCookie = "authToken"
+
 export class UnauthorizedError extends Error {
 	statusCode: number
 
@@ -51,9 +53,19 @@ class AuthResolver {
 
 		// Get the JWT for the user and instruct response to set cookie
 		const token = getToken(user)
-		setCookie(res, token, "authToken")
+		setCookie(res, token, authCookie)
 
 		return user
+	}
+
+	@Mutation(returns => String)
+	async logoutUser(@Ctx("userId") userId: string, @Ctx("res") res: Response) {
+		if (!userId) {
+			return "User is not logged in. Logout failed"
+		} else {
+			res.clearCookie(authCookie)
+			return "User logged out successfully"
+		}
 	}
 
 	@Mutation(returns => User)
@@ -75,7 +87,7 @@ class AuthResolver {
 
 		// Get the JWT for the created user and instruct response to set cookie
 		const token = getToken(user)
-		setCookie(res, token, "authToken")
+		setCookie(res, token, authCookie)
 
 		return user
 	}
