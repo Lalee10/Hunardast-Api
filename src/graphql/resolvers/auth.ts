@@ -5,17 +5,9 @@ import { Resolver, Query, Arg, Ctx, Mutation } from "type-graphql"
 import { CoreDatabase } from "../../models/interface"
 import { User } from "./user"
 import { validateEmail, getToken, setCookie } from "../../controllers/auth"
+import { UnauthorizedError } from "../../helpers/error"
 
 const authCookie = "authToken"
-
-export class UnauthorizedError extends Error {
-	statusCode: number
-
-	constructor(statusCode = 401, message = "Invalid Token. Authentication Failed!") {
-		super(message)
-		this.statusCode = statusCode
-	}
-}
 
 @Resolver()
 class AuthResolver {

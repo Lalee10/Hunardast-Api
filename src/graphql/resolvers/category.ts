@@ -1,12 +1,7 @@
 import { ApolloError } from "apollo-server-express"
 import { ObjectType, Field, ID, Query, Mutation, Arg, Ctx, Resolver } from "type-graphql"
 import { CoreDatabase } from "../../models/interface"
-
-const getSlug = (name: string) =>
-	name
-		.trim()
-		.toLowerCase()
-		.replace(" ", "-")
+import { getSlug } from "../../helpers/string"
 
 @ObjectType()
 class Category {
@@ -32,7 +27,7 @@ class Category {
 @Resolver(Category)
 class CategoryResolver {
 	@Query(returns => Category, { nullable: true })
-	async category(
+	async readCategory(
 		@Ctx("db") db: CoreDatabase,
 		@Arg("_id", { nullable: true }) _id?: string,
 		@Arg("name", { nullable: true }) name?: string,
@@ -42,7 +37,7 @@ class CategoryResolver {
 	}
 
 	@Query(returns => [Category])
-	async categories(@Ctx("db") db: CoreDatabase): Promise<Category[]> {
+	async readCategories(@Ctx("db") db: CoreDatabase): Promise<Category[]> {
 		return await db.Category.find()
 	}
 

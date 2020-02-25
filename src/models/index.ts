@@ -1,4 +1,4 @@
-import mongoose from "mongoose"
+import mongoose, { Model } from "mongoose"
 import { CoreDatabase } from "./interface"
 import categorySchema from "./category"
 import userSchema from "./user"
@@ -30,6 +30,7 @@ export const getDb = (dbName = "hunardast"): CoreDatabase => {
 			Store: conn.model("Store", storeSchema),
 			User: conn.model("User", userSchema)
 		}
+		// TODO: add validators, including unique validators for mongoose models
 		databases[dbName] = db
 		return db
 	}
