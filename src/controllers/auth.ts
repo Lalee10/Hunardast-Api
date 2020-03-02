@@ -2,9 +2,10 @@ import jwt from "jsonwebtoken"
 import { ApolloError } from "apollo-server-express"
 import { CoreDatabase } from "../models/interface"
 import { IUser } from "../models/user"
-import { Response } from "express"
+import { Response, Request } from "express"
 
 const secretKey = `${process.env.SECRET_KEY}`
+const authCookieName = "authTokenHD"
 
 export async function validateEmail(db: CoreDatabase, email: string) {
 	const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
@@ -29,17 +30,22 @@ export function getToken(user: IUser) {
 	return token
 }
 
-export function setCookie(res: Response, token: string, name: string) {
-	res.cookie(name, token, {
+export function setAuthCookie(res: Response, token: string) {
+	res.cookie(authCookieName, token, {
 		httpOnly: true,
 		secure: process.env.NODE_ENV === "production",
 		maxAge: 1000 * 60 * 60 * 24 * 2
 	})
 }
 
-export function verifyToken(token: string) {
+export function clearAuthCookie(res: Response) {
+	res.clearCookie(authCookieName)
+}
+
+export function verifyAuthToken(req: Request) {
 	try {
-		const decoded = jwt.verify(token, secretKey)
+		const authToken = req.cookies[authCookieName]
+		const decoded = jwt.verify(authToken, secretKey)
 		if (typeof decoded === "object") {
 			return decoded["_id"]
 		} else {

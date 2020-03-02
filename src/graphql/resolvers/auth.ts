@@ -4,10 +4,8 @@ import { ApolloError } from "apollo-server-express"
 import { Resolver, Query, Arg, Ctx, Mutation } from "type-graphql"
 import { CoreDatabase } from "../../models/interface"
 import { User } from "./user"
-import { validateEmail, getToken, setCookie } from "../../controllers/auth"
+import { validateEmail, getToken, setAuthCookie, clearAuthCookie } from "../../controllers/auth"
 import { UnauthorizedError } from "../../helpers/error"
-
-const authCookie = "authToken"
 
 @Resolver()
 class AuthResolver {
@@ -45,7 +43,7 @@ class AuthResolver {
 
 		// Get the JWT for the user and instruct response to set cookie
 		const token = getToken(user)
-		setCookie(res, token, authCookie)
+		setAuthCookie(res, token)
 
 		return user
 	}
@@ -55,7 +53,7 @@ class AuthResolver {
 		if (!userId) {
 			return "User is not logged in. Logout failed"
 		} else {
-			res.clearCookie(authCookie)
+			clearAuthCookie(res)
 			return "User logged out successfully"
 		}
 	}
@@ -79,7 +77,7 @@ class AuthResolver {
 
 		// Get the JWT for the created user and instruct response to set cookie
 		const token = getToken(user)
-		setCookie(res, token, authCookie)
+		setAuthCookie(res, token)
 
 		return user
 	}

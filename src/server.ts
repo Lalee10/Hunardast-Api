@@ -6,19 +6,18 @@ import app from "./app"
 import schema from "./graphql/schema"
 import { getDb } from "./models"
 import { ApolloContext } from "./models/interface"
-import { verifyToken } from "./controllers/auth"
+import { verifyAuthToken } from "./controllers/auth"
 
 const server = new ApolloServer({
 	schema,
 	formatError: error => {
-		console.log("Error: ", error)
+		console.log("Error Message: ", error.message)
 
 		return error
 	},
 	context: ({ req, res }): ApolloContext => {
 		const db = getDb()
-		const token = req.cookies["authToken"]
-		const userId = verifyToken(token)
+		const userId = verifyAuthToken(req)
 
 		return { req, res, db, userId }
 	}
