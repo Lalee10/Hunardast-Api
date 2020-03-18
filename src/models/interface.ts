@@ -19,9 +19,17 @@ export interface CoreDatabase {
 	Review: Model<IReview>
 }
 
+export interface DecodedUser {
+	_id: string
+	name: string
+	email: string
+}
+
+export type Nullable<T> = T | null
+
 export interface ApolloContext {
 	req: Request
 	res: Response
 	db: CoreDatabase
-	userId: string | null
+	user: Nullable<DecodedUser>
 }

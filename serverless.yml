@@ -1,0 +1,31 @@
+org: hlaleebese16seecs
+app: hunardast-api
+# serverless.yml
+
+service: hunardast-api
+custom:
+   webpack:
+      webpackConfig: ./webpack.config.js
+      includeModules: true
+plugins:
+   - serverless-webpack
+   - serverless-offline
+provider:
+   name: aws
+   runtime: nodejs10.x
+   environment:
+      DB_STRING: mongodb+srv://hunardast:Lalee1402.@hunardast-twqgc.azure.mongodb.net/hunardast?retryWrites=true&w=majority
+      NODE_ENV: development
+      SECRET_KEY: LUFFYISTHEKING:03005006001:NEWGATE_JWT_SECRET
+functions:
+   graphql:
+      handler: src/server.graphqlHandler
+      events:
+         - http:
+              path: graphql
+              method: post
+              cors: true
+         - http:
+              path: graphql
+              method: get
+              cors: true

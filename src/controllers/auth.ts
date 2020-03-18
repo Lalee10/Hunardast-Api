@@ -1,11 +1,14 @@
 import jwt from "jsonwebtoken"
+import { Response, Request } from "express"
 import { ApolloError } from "apollo-server-express"
 import { CoreDatabase } from "../models/interface"
 import { IUser } from "../models/user"
-import { Response, Request } from "express"
 
 const secretKey = `${process.env.SECRET_KEY}`
 const authCookieName = "authTokenHD"
+const loginCookieName = "loggedInHD"
+const cookieMaxAge = 1000 * 60 * 60 * 24 * 2
+const isProduction = process.env.NODE_ENV === "production"
 
 export async function validateEmail(db: CoreDatabase, email: string) {
 	const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
@@ -23,7 +26,7 @@ export async function validateEmail(db: CoreDatabase, email: string) {
 }
 
 export function getToken(user: IUser) {
-	const token = jwt.sign({ email: user.email, _id: user._id }, secretKey, {
+	const token = jwt.sign({ _id: user._id, name: user.name, email: user.email }, secretKey, {
 		audience: "https://api.hunardast.com",
 		expiresIn: "2 days"
 	})
@@ -31,15 +34,13 @@ export function getToken(user: IUser) {
 }
 
 export function setAuthCookie(res: Response, token: string) {
-	res.cookie(authCookieName, token, {
-		httpOnly: true,
-		secure: process.env.NODE_ENV === "production",
-		maxAge: 1000 * 60 * 60 * 24 * 2
-	})
+	res.cookie(authCookieName, token, { secure: isProduction, maxAge: cookieMaxAge, httpOnly: true })
+	res.cookie(loginCookieName, true, { secure: isProduction, maxAge: cookieMaxAge })
 }
 
 export function clearAuthCookie(res: Response) {
 	res.clearCookie(authCookieName)
+	res.clearCookie(loginCookieName)
 }
 
 export function verifyAuthToken(req: Request) {
@@ -47,7 +48,11 @@ export function verifyAuthToken(req: Request) {
 		const authToken = req.cookies[authCookieName]
 		const decoded = jwt.verify(authToken, secretKey)
 		if (typeof decoded === "object") {
-			return decoded["_id"]
+			return {
+				_id: decoded["_id"],
+				name: decoded["name"],
+				email: decoded["email"]
+			}
 		} else {
 			return null
 		}

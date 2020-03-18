@@ -1,27 +1,34 @@
-import bcrypt from "bcrypt"
+import bcrypt from "bcryptjs"
 import { Response } from "express"
 import { ApolloError } from "apollo-server-express"
-import { Resolver, Query, Arg, Ctx, Mutation } from "type-graphql"
-import { CoreDatabase } from "../../models/interface"
-import { User } from "./user"
+import { Resolver, Query, Arg, Ctx, Mutation, ObjectType, Field } from "type-graphql"
+import { CoreDatabase, ApolloContext } from "../../models/interface"
 import { validateEmail, getToken, setAuthCookie, clearAuthCookie } from "../../controllers/auth"
 import { UnauthorizedError } from "../../helpers/error"
+import { User } from "./user"
+
+@ObjectType()
+class BaseUser {
+	@Field()
+	_id: string
+
+	@Field()
+	name: string
+
+	@Field()
+	email: string
+}
 
 @Resolver()
 class AuthResolver {
-	@Query(returns => [User], { nullable: "items" })
-	async users(@Ctx("db") db: CoreDatabase) {
-		return await db.User.find()
-	}
-
-	@Query(returns => User, { nullable: true })
-	async verifyUser(@Arg("required") required: boolean, @Ctx("userId") userId: string, @Ctx("db") db: CoreDatabase) {
-		if (required && !userId) {
+	@Query(returns => BaseUser, { nullable: true })
+	async verifyUser(@Arg("required") required: boolean, @Ctx() ctx: ApolloContext) {
+		if (required && !ctx.user) {
 			throw new UnauthorizedError()
-		} else if (!userId) {
+		} else if (!ctx.user) {
 			return null
 		} else {
-			return await db.User.findById(userId)
+			return ctx.user
 		}
 	}
 
@@ -49,8 +56,8 @@ class AuthResolver {
 	}
 
 	@Mutation(returns => String)
-	async logoutUser(@Ctx("userId") userId: string, @Ctx("res") res: Response) {
-		if (!userId) {
+	async logoutUser(@Ctx() ctx: ApolloContext, @Ctx("res") res: Response) {
+		if (!ctx.user) {
 			return "User is not logged in. Logout failed"
 		} else {
 			clearAuthCookie(res)
