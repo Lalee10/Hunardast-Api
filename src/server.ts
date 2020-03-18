@@ -1,16 +1,18 @@
-import "reflect-metadata"
 import dotenv from "dotenv"
 dotenv.config()
 import { ApolloServer } from "apollo-server-express"
+import { DIRECTIVES } from "@graphql-codegen/typescript-mongodb"
 // import serverless from "serverless-http"
 import app from "./app"
-import schema from "./graphql/schema"
 import { getDb } from "./models"
 import { ApolloContext } from "./models/interface"
 import { verifyAuthToken } from "./controllers/auth"
+import typeDefs from "./graphql/typeDefs"
+import resolvers from "./graphql/resolvers"
 
 const server = new ApolloServer({
-	schema,
+	typeDefs: [DIRECTIVES, typeDefs],
+	resolvers: resolvers,
 	context: ({ req, res }): ApolloContext => {
 		const db = getDb()
 		const user = verifyAuthToken(req)

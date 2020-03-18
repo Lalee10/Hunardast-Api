@@ -1,0 +1,22 @@
+overwrite: true
+schema: "./src/graphql/schema.ts"
+require:
+   - ts-node/register
+documents: null
+config:
+   useIndexSignature: true
+   contextType: ../models/interface#ApolloContext
+   objectIdType: ObjectId#../models/interface
+   typesPrefix: I
+   dbTypeSuffix: Db
+   scalars:
+      Date: Date
+generates:
+   src/typings/types.ts:
+      plugins:
+         - "typescript"
+         - "typescript-resolvers"
+         - "typescript-mongodb"
+hooks:
+   afterAllFileWrite:
+      - prettier --write

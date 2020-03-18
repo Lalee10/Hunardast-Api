@@ -2,7 +2,7 @@ import jwt from "jsonwebtoken"
 import { Response, Request } from "express"
 import { ApolloError } from "apollo-server-express"
 import { CoreDatabase } from "../models/interface"
-import { IUser } from "../models/user"
+import { IUserDb } from "../typings/types"
 
 const secretKey = `${process.env.SECRET_KEY}`
 const authCookieName = "authTokenHD"
@@ -25,7 +25,7 @@ export async function validateEmail(db: CoreDatabase, email: string) {
 	}
 }
 
-export function getToken(user: IUser) {
+export function getToken(user: IUserDb) {
 	const token = jwt.sign({ _id: user._id, name: user.name, email: user.email }, secretKey, {
 		audience: "https://api.hunardast.com",
 		expiresIn: "2 days"

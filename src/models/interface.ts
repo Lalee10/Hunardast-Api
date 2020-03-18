@@ -1,10 +1,8 @@
-import { Model } from "mongoose"
-import { ICategory } from "./category"
-import { IUser } from "./user"
+import { Model, Schema, Document } from "mongoose"
 import { IReview } from "./review"
-import { IStore } from "./store"
 import { IProduct } from "./product"
 import { Request, Response } from "express"
+import { IUserDb, ICategoryDb, IStoreDb } from "../typings/types"
 
 export interface Timestamp {
 	createdAt: Date
@@ -12,9 +10,9 @@ export interface Timestamp {
 }
 
 export interface CoreDatabase {
-	Category: Model<ICategory>
-	User: Model<IUser>
-	Store: Model<IStore>
+	Category: Model<ICategoryDb & Document>
+	User: Model<IUserDb & Document>
+	Store: Model<IStoreDb & Document>
 	Product: Model<IProduct>
 	Review: Model<IReview>
 }
@@ -33,3 +31,5 @@ export interface ApolloContext {
 	db: CoreDatabase
 	user: Nullable<DecodedUser>
 }
+
+export type ObjectId = Schema.Types.ObjectId

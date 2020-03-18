@@ -1,4 +1,4 @@
-import mongoose, { Model } from "mongoose"
+import mongoose from "mongoose"
 import { CoreDatabase } from "./interface"
 import categorySchema from "./category"
 import userSchema from "./user"
