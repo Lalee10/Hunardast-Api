@@ -22,7 +22,7 @@ const typeDefs = gql`
 		_id: ID! @id
 		name: String! @column
 		slug: String! @column
-		banner: [String]! @column
+		banner: String @column
 		image: String @column
 		location: String! @column
 		tagline: String! @column
@@ -40,15 +40,13 @@ const typeDefs = gql`
 		updatedAt: Date! @column
 	}
 
-	input CreateStoreInput {
+	input StoreCreateInput {
 		name: String!
-		banner: String
-		image: String
 		location: String!
 		tagline: String!
 	}
 
-	input UpdateStoreInput {
+	input StoreUpdateInput {
 		name: String
 		banner: String
 		image: String
@@ -56,12 +54,23 @@ const typeDefs = gql`
 		tagline: String
 	}
 
+	type S3Payload {
+		signedRequest: String!
+		url: String!
+	}
+
 	type Mutation {
-		registerUser(password: String!, email: String!, name: String!): User!
+		# AWS S3
+		getSignedUrl(fileName: String!, fileType: String!): S3Payload!
+
+		# User
 		loginUser(password: String!, email: String!): User!
 		logoutUser: String!
-		createStore(data: CreateStoreInput!): Store!
-		updateStore(data: UpdateStoreInput!): Store!
+		registerUser(password: String!, email: String!, name: String!): User!
+
+		# Store
+		createStore(data: StoreCreateInput!): Store!
+		updateStore(data: StoreUpdateInput!): Store
 	}
 
 	type Query {

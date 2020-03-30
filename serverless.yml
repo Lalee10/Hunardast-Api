@@ -13,13 +13,14 @@ plugins:
 provider:
    name: aws
    runtime: nodejs10.x
+   region: eu-central-1
    environment:
       DB_STRING: mongodb+srv://hunardast:Lalee1402.@hunardast-twqgc.azure.mongodb.net/hunardast?retryWrites=true&w=majority
       NODE_ENV: development
       SECRET_KEY: LUFFYISTHEKING:03005006001:NEWGATE_JWT_SECRET
 functions:
    graphql:
-      handler: src/server.graphqlHandler
+      handler: src/handler.graphqlHandler
       events:
          - http:
               path: graphql

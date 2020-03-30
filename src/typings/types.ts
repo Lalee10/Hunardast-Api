@@ -28,14 +28,6 @@ export type ICategory = {
 	updatedAt: Scalars["Date"]
 }
 
-export type ICreateStoreInput = {
-	name: Scalars["String"]
-	banner?: Maybe<Scalars["String"]>
-	image?: Maybe<Scalars["String"]>
-	location: Scalars["String"]
-	tagline: Scalars["String"]
-}
-
 export type IDecodedUser = {
 	__typename?: "DecodedUser"
 	_id: Scalars["String"]
@@ -45,11 +37,22 @@ export type IDecodedUser = {
 
 export type IMutation = {
 	__typename?: "Mutation"
-	registerUser: IUser
+	getSignedUrl: IS3Payload
 	loginUser: IUser
 	logoutUser: Scalars["String"]
+	registerUser: IUser
 	createStore: IStore
-	updateStore: IStore
+	updateStore?: Maybe<IStore>
+}
+
+export type IMutationGetSignedUrlArgs = {
+	fileName: Scalars["String"]
+	fileType: Scalars["String"]
+}
+
+export type IMutationLoginUserArgs = {
+	password: Scalars["String"]
+	email: Scalars["String"]
 }
 
 export type IMutationRegisterUserArgs = {
@@ -58,17 +61,12 @@ export type IMutationRegisterUserArgs = {
 	name: Scalars["String"]
 }
 
-export type IMutationLoginUserArgs = {
-	password: Scalars["String"]
-	email: Scalars["String"]
-}
-
 export type IMutationCreateStoreArgs = {
-	data: ICreateStoreInput
+	data: IStoreCreateInput
 }
 
 export type IMutationUpdateStoreArgs = {
-	data: IUpdateStoreInput
+	data: IStoreUpdateInput
 }
 
 export type IQuery = {
@@ -81,12 +79,18 @@ export type IQueryVerifyUserArgs = {
 	required: Scalars["Boolean"]
 }
 
+export type IS3Payload = {
+	__typename?: "S3Payload"
+	signedRequest: Scalars["String"]
+	url: Scalars["String"]
+}
+
 export type IStore = {
 	__typename?: "Store"
 	_id: Scalars["ID"]
 	name: Scalars["String"]
 	slug: Scalars["String"]
-	banner: Array<Maybe<Scalars["String"]>>
+	banner?: Maybe<Scalars["String"]>
 	image?: Maybe<Scalars["String"]>
 	location: Scalars["String"]
 	tagline: Scalars["String"]
@@ -95,7 +99,13 @@ export type IStore = {
 	updatedAt: Scalars["Date"]
 }
 
-export type IUpdateStoreInput = {
+export type IStoreCreateInput = {
+	name: Scalars["String"]
+	location: Scalars["String"]
+	tagline: Scalars["String"]
+}
+
+export type IStoreUpdateInput = {
 	name?: Maybe<Scalars["String"]>
 	banner?: Maybe<Scalars["String"]>
 	image?: Maybe<Scalars["String"]>
@@ -194,9 +204,10 @@ export type IResolversTypes = ResolversObject<{
 	ID: ResolverTypeWrapper<Scalars["ID"]>
 	Date: ResolverTypeWrapper<Scalars["Date"]>
 	Mutation: ResolverTypeWrapper<{}>
+	S3Payload: ResolverTypeWrapper<IS3Payload>
 	User: ResolverTypeWrapper<IUser>
-	CreateStoreInput: ICreateStoreInput
-	UpdateStoreInput: IUpdateStoreInput
+	StoreCreateInput: IStoreCreateInput
+	StoreUpdateInput: IStoreUpdateInput
 	AdditionalEntityFields: IAdditionalEntityFields
 	Category: ResolverTypeWrapper<ICategory>
 }>
@@ -211,9 +222,10 @@ export type IResolversParentTypes = ResolversObject<{
 	ID: Scalars["ID"]
 	Date: Scalars["Date"]
 	Mutation: {}
+	S3Payload: IS3Payload
 	User: IUser
-	CreateStoreInput: ICreateStoreInput
-	UpdateStoreInput: IUpdateStoreInput
+	StoreCreateInput: IStoreCreateInput
+	StoreUpdateInput: IStoreUpdateInput
 	AdditionalEntityFields: IAdditionalEntityFields
 	Category: ICategory
 }>
@@ -330,11 +342,11 @@ export type IMutationResolvers<
 	ContextType = ApolloContext,
 	ParentType extends IResolversParentTypes["Mutation"] = IResolversParentTypes["Mutation"]
 > = ResolversObject<{
-	registerUser?: Resolver<
-		IResolversTypes["User"],
+	getSignedUrl?: Resolver<
+		IResolversTypes["S3Payload"],
 		ParentType,
 		ContextType,
-		RequireFields<IMutationRegisterUserArgs, "password" | "email" | "name">
+		RequireFields<IMutationGetSignedUrlArgs, "fileName" | "fileType">
 	>
 	loginUser?: Resolver<
 		IResolversTypes["User"],
@@ -343,6 +355,12 @@ export type IMutationResolvers<
 		RequireFields<IMutationLoginUserArgs, "password" | "email">
 	>
 	logoutUser?: Resolver<IResolversTypes["String"], ParentType, ContextType>
+	registerUser?: Resolver<
+		IResolversTypes["User"],
+		ParentType,
+		ContextType,
+		RequireFields<IMutationRegisterUserArgs, "password" | "email" | "name">
+	>
 	createStore?: Resolver<
 		IResolversTypes["Store"],
 		ParentType,
@@ -350,7 +368,7 @@ export type IMutationResolvers<
 		RequireFields<IMutationCreateStoreArgs, "data">
 	>
 	updateStore?: Resolver<
-		IResolversTypes["Store"],
+		Maybe<IResolversTypes["Store"]>,
 		ParentType,
 		ContextType,
 		RequireFields<IMutationUpdateStoreArgs, "data">
@@ -370,6 +388,15 @@ export type IQueryResolvers<
 	readMyStore?: Resolver<Maybe<IResolversTypes["Store"]>, ParentType, ContextType>
 }>
 
+export type IS3PayloadResolvers<
+	ContextType = ApolloContext,
+	ParentType extends IResolversParentTypes["S3Payload"] = IResolversParentTypes["S3Payload"]
+> = ResolversObject<{
+	signedRequest?: Resolver<IResolversTypes["String"], ParentType, ContextType>
+	url?: Resolver<IResolversTypes["String"], ParentType, ContextType>
+	__isTypeOf?: isTypeOfResolverFn<ParentType>
+}>
+
 export type IStoreResolvers<
 	ContextType = ApolloContext,
 	ParentType extends IResolversParentTypes["Store"] = IResolversParentTypes["Store"]
@@ -377,7 +404,7 @@ export type IStoreResolvers<
 	_id?: Resolver<IResolversTypes["ID"], ParentType, ContextType>
 	name?: Resolver<IResolversTypes["String"], ParentType, ContextType>
 	slug?: Resolver<IResolversTypes["String"], ParentType, ContextType>
-	banner?: Resolver<Array<Maybe<IResolversTypes["String"]>>, ParentType, ContextType>
+	banner?: Resolver<Maybe<IResolversTypes["String"]>, ParentType, ContextType>
 	image?: Resolver<Maybe<IResolversTypes["String"]>, ParentType, ContextType>
 	location?: Resolver<IResolversTypes["String"], ParentType, ContextType>
 	tagline?: Resolver<IResolversTypes["String"], ParentType, ContextType>
@@ -406,6 +433,7 @@ export type IResolvers<ContextType = ApolloContext> = ResolversObject<{
 	DecodedUser?: IDecodedUserResolvers<ContextType>
 	Mutation?: IMutationResolvers<ContextType>
 	Query?: IQueryResolvers<ContextType>
+	S3Payload?: IS3PayloadResolvers<ContextType>
 	Store?: IStoreResolvers<ContextType>
 	User?: IUserResolvers<ContextType>
 }>
@@ -426,7 +454,7 @@ export type IStoreDb = {
 	_id: ObjectId
 	name: string
 	slug: string
-	banner: Array<Maybe<string>>
+	banner?: Maybe<string>
 	image?: Maybe<string>
 	location: string
 	tagline: string

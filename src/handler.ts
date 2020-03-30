@@ -2,6 +2,7 @@ import dotenv from "dotenv"
 dotenv.config()
 import { ApolloServer } from "apollo-server-express"
 import { DIRECTIVES } from "@graphql-codegen/typescript-mongodb"
+import serverless from "serverless-http"
 import app from "./app"
 import { getDb } from "./models"
 import { ApolloContext } from "./models/interface"
@@ -20,6 +21,12 @@ const server = new ApolloServer({
 	}
 })
 
-server.applyMiddleware({ app: app, cors: false })
+server.applyMiddleware({
+	app: app,
+	cors: {
+		credentials: true,
+		origin: true
+	}
+})
 
-app.listen(4000, () => console.log(`🚀 Server ready at http://localhost:4000${server.graphqlPath}`))
+export const graphqlHandler = serverless(app)

@@ -5,23 +5,8 @@ import cookieParser from "cookie-parser"
 
 const app = express()
 
-const whitelist = [
-	"http://localhost:4000",
-	"http://localhost:3000",
-	"http://hunardast.com",
-	"https://hunardast.com",
-	"http://hunardast-app.now.sh/",
-	"https://hunardast-app.now.sh/"
-]
-
 const corsOptions: CorsOptions = {
-	origin: function(origin, callback) {
-		if (whitelist.includes(`${origin}`) || !origin) {
-			callback(null, true)
-		} else {
-			callback(new Error("Not allowed by CORS"))
-		}
-	},
+	origin: true,
 	credentials: true
 }
 

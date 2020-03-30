@@ -8,27 +8,35 @@ export const storeQueries: IQueryResolvers = {
 		const { db, user } = ctx
 		if (!user) throw new UnauthorizedError(401, "User must be logged in to view their store")
 		return await db.Store.findOne({ manager: user._id })
-	}
+	},
 }
 
 export const storeMutations: IMutationResolvers = {
-	createStore: async (root, args, ctx) => {
-		const { data } = args
+	createStore: async (root, { data }, ctx) => {
+		const { name } = data
 		const { db, user } = ctx
+
 		if (!user) throw new UnauthorizedError(401, "User must be logged in to create a store")
 
-		// Validate that user doesn't have a store
-		const userHasStore = await db.Store.exists({ manager: user._id })
-		if (userHasStore) throw new ApolloError("User already has a store linked to their account")
-
-		const slug = getSlug(data.name)
-
-		// Validate name
-		const nameExists = await db.Store.exists({ name: data.name, slug: slug })
+		const slug = getSlug(name)
+		const nameExists = await db.Store.exists({ name, slug })
 		if (nameExists) throw new ApolloError("A store with this name already exists")
 
-		const store = await db.Store.create({ ...data, slug, manager: user._id })
+		const created = await db.Store.create({
+			slug: slug,
+			manager: user._id,
+			...data,
+		})
 
-		return store
-	}
+		return created
+	},
+	updateStore: async (root, { data }, { db, user }) => {
+		if (!user) throw new UnauthorizedError(401, "User must be logged in to update their store")
+
+		const store = await db.Store.findOne({ manager: user._id })
+		if (!store) throw new ApolloError("User has no store linked to their account")
+
+		await store.update({ ...data, slug: data.name ? getSlug(data.name) : undefined })
+		return await db.Store.findById(store._id)
+	},
 }
