@@ -7,7 +7,8 @@ export const storeQueries: IQueryResolvers = {
 	readMyStore: async (root, args, ctx) => {
 		const { db, user } = ctx
 		if (!user) throw new UnauthorizedError(401, "User must be logged in to view their store")
-		return await db.Store.findOne({ manager: user._id })
+		const store = await db.Store.findOne({ manager: user._id })
+		return store
 	},
 }
 
@@ -36,7 +37,9 @@ export const storeMutations: IMutationResolvers = {
 		const store = await db.Store.findOne({ manager: user._id })
 		if (!store) throw new ApolloError("User has no store linked to their account")
 
-		await store.update({ ...data, slug: data.name ? getSlug(data.name) : undefined })
+		const slug = data.name ? getSlug(data.name) : store.slug
+		await store.updateOne({ ...data, slug })
+
 		return await db.Store.findById(store._id)
 	},
 }
