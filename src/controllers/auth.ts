@@ -1,6 +1,5 @@
 import jwt from "jsonwebtoken"
-import { Response, Request } from "express"
-import { ApolloError } from "apollo-server-express"
+import { ApolloError } from "apollo-server"
 import { CoreDatabase } from "../models/interface"
 import { IUserDb } from "../typings/types"
 
@@ -28,30 +27,36 @@ export async function validateEmail(db: CoreDatabase, email: string) {
 export function getToken(user: IUserDb) {
 	const token = jwt.sign({ _id: user._id, name: user.name, email: user.email }, secretKey, {
 		audience: "https://api.hunardast.com",
-		expiresIn: "2 days"
+		expiresIn: "2 days",
 	})
 	return token
 }
 
-export function setAuthCookie(res: Response, token: string) {
+export function setAuthCookie(res: ServerResponse, token: string) {
 	res.cookie(authCookieName, token, { secure: isProduction, maxAge: cookieMaxAge, httpOnly: true })
 	res.cookie(loginCookieName, true, { secure: isProduction, maxAge: cookieMaxAge })
 }
 
-export function clearAuthCookie(res: Response) {
+export function clearAuthCookie(res: ServerResponse) {
 	res.clearCookie(authCookieName)
 	res.clearCookie(loginCookieName)
 }
 
-export function verifyAuthToken(req: Request) {
+export function getCookie(cookies: string, name: string) {
+	const arr = cookies.split(";").filter((e) => e.includes(name))
+	if (arr.length === 0) return ""
+	else return arr[0].split("=")[1].trim()
+}
+
+export function verifyAuthToken(cookies: string) {
 	try {
-		const authToken = req.cookies[authCookieName]
+		const authToken = getCookie(cookies, "authToken")
 		const decoded = jwt.verify(authToken, secretKey)
 		if (typeof decoded === "object") {
 			return {
 				_id: decoded["_id"],
 				name: decoded["name"],
-				email: decoded["email"]
+				email: decoded["email"],
 			}
 		} else {
 			return null

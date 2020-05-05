@@ -1,8 +1,7 @@
 import dotenv from "dotenv"
 dotenv.config()
-import { ApolloServer } from "apollo-server-express"
+import { ApolloServer } from "apollo-server"
 import { DIRECTIVES } from "@graphql-codegen/typescript-mongodb"
-import app from "./app"
 import { getDb } from "./models"
 import { ApolloContext } from "./models/interface"
 import { verifyAuthToken } from "./controllers/auth"
@@ -14,12 +13,14 @@ const server = new ApolloServer({
 	resolvers: resolvers,
 	context: ({ req, res }): ApolloContext => {
 		const db = getDb()
-		const user = verifyAuthToken(req)
+		const user = verifyAuthToken(req.headers.cookie || "")
 		console.log("Request: ", user?._id, req.headers["user-agent"]?.split(" ")[0], req.body?.operationName)
 		return { req, res, db, user }
-	}
+	},
+	cors: { origin: true, credentials: true },
 })
 
-server.applyMiddleware({ app: app, cors: false })
-
-app.listen(4000, () => console.log(`🚀 Server ready at http://localhost:4000${server.graphqlPath}`))
+// The `listen` method launches a web server.
+server.listen().then(({ url }) => {
+	console.log(`🚀  Server ready at ${url}`)
+})

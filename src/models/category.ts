@@ -1,17 +1,10 @@
-import { Schema, Document } from "mongoose"
-import { Timestamp } from "./interface"
-
-export interface ICategory extends Document, Timestamp {
-	name: string
-	slug: string
-	parent: string
-}
+import { Schema } from "mongoose"
 
 export const categorySchema: Schema = new Schema(
 	{
 		name: { type: String, required: true, unique: true, trim: true },
 		slug: { type: String, required: true, unique: true, trim: true },
-		parent: { type: String, required: true, trim: true }
+		level: { type: Number, max: 4, min: 0, default: 0 },
 	},
 	{ timestamps: true }
 )

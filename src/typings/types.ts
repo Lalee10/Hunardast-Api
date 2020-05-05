@@ -23,7 +23,7 @@ export type ICategory = {
 	_id: Scalars["ID"]
 	name: Scalars["String"]
 	slug: Scalars["String"]
-	parent: Scalars["String"]
+	level: Scalars["Int"]
 	createdAt: Scalars["Date"]
 	updatedAt: Scalars["Date"]
 }
@@ -69,6 +69,21 @@ export type IMutationUpdateStoreArgs = {
 	data: IStoreUpdateInput
 }
 
+export type IProduct = {
+	__typename?: "Product"
+	_id: Scalars["ID"]
+	name: Scalars["String"]
+	price: Scalars["Float"]
+	discount: Scalars["Float"]
+	description: Scalars["String"]
+	sizes: Array<Maybe<Scalars["String"]>>
+	colors: Array<Maybe<Scalars["String"]>>
+	store: IStore
+	categories: Array<Maybe<ICategory>>
+	createdAt: Scalars["Date"]
+	updatedAt: Scalars["Date"]
+}
+
 export type IQuery = {
 	__typename?: "Query"
 	verifyUser?: Maybe<IDecodedUser>
@@ -77,6 +92,17 @@ export type IQuery = {
 
 export type IQueryVerifyUserArgs = {
 	required: Scalars["Boolean"]
+}
+
+export type IReview = {
+	__typename?: "Review"
+	_id: Scalars["ID"]
+	reviewer: IUser
+	rating: Scalars["Int"]
+	review: Scalars["String"]
+	editCount: Scalars["Int"]
+	createdAt: Scalars["Date"]
+	updatedAt: Scalars["Date"]
 }
 
 export type IS3Payload = {
@@ -94,7 +120,7 @@ export type IStore = {
 	image?: Maybe<Scalars["String"]>
 	location: Scalars["String"]
 	tagline: Scalars["String"]
-	manager: Scalars["String"]
+	manager: IUser
 	createdAt: Scalars["Date"]
 	updatedAt: Scalars["Date"]
 }
@@ -202,14 +228,18 @@ export type IResolversTypes = ResolversObject<{
 	String: ResolverTypeWrapper<Scalars["String"]>
 	Store: ResolverTypeWrapper<IStore>
 	ID: ResolverTypeWrapper<Scalars["ID"]>
+	User: ResolverTypeWrapper<IUser>
 	Date: ResolverTypeWrapper<Scalars["Date"]>
 	Mutation: ResolverTypeWrapper<{}>
 	S3Payload: ResolverTypeWrapper<IS3Payload>
-	User: ResolverTypeWrapper<IUser>
 	StoreCreateInput: IStoreCreateInput
 	StoreUpdateInput: IStoreUpdateInput
 	AdditionalEntityFields: IAdditionalEntityFields
 	Category: ResolverTypeWrapper<ICategory>
+	Int: ResolverTypeWrapper<Scalars["Int"]>
+	Review: ResolverTypeWrapper<IReview>
+	Product: ResolverTypeWrapper<IProduct>
+	Float: ResolverTypeWrapper<Scalars["Float"]>
 }>
 
 /** Mapping between all available schema types and the resolvers parents */
@@ -220,14 +250,18 @@ export type IResolversParentTypes = ResolversObject<{
 	String: Scalars["String"]
 	Store: IStore
 	ID: Scalars["ID"]
+	User: IUser
 	Date: Scalars["Date"]
 	Mutation: {}
 	S3Payload: IS3Payload
-	User: IUser
 	StoreCreateInput: IStoreCreateInput
 	StoreUpdateInput: IStoreUpdateInput
 	AdditionalEntityFields: IAdditionalEntityFields
 	Category: ICategory
+	Int: Scalars["Int"]
+	Review: IReview
+	Product: IProduct
+	Float: Scalars["Float"]
 }>
 
 export type IUnionDirectiveArgs = {
@@ -318,7 +352,7 @@ export type ICategoryResolvers<
 	_id?: Resolver<IResolversTypes["ID"], ParentType, ContextType>
 	name?: Resolver<IResolversTypes["String"], ParentType, ContextType>
 	slug?: Resolver<IResolversTypes["String"], ParentType, ContextType>
-	parent?: Resolver<IResolversTypes["String"], ParentType, ContextType>
+	level?: Resolver<IResolversTypes["Int"], ParentType, ContextType>
 	createdAt?: Resolver<IResolversTypes["Date"], ParentType, ContextType>
 	updatedAt?: Resolver<IResolversTypes["Date"], ParentType, ContextType>
 	__isTypeOf?: isTypeOfResolverFn<ParentType>
@@ -375,6 +409,24 @@ export type IMutationResolvers<
 	>
 }>
 
+export type IProductResolvers<
+	ContextType = ApolloContext,
+	ParentType extends IResolversParentTypes["Product"] = IResolversParentTypes["Product"]
+> = ResolversObject<{
+	_id?: Resolver<IResolversTypes["ID"], ParentType, ContextType>
+	name?: Resolver<IResolversTypes["String"], ParentType, ContextType>
+	price?: Resolver<IResolversTypes["Float"], ParentType, ContextType>
+	discount?: Resolver<IResolversTypes["Float"], ParentType, ContextType>
+	description?: Resolver<IResolversTypes["String"], ParentType, ContextType>
+	sizes?: Resolver<Array<Maybe<IResolversTypes["String"]>>, ParentType, ContextType>
+	colors?: Resolver<Array<Maybe<IResolversTypes["String"]>>, ParentType, ContextType>
+	store?: Resolver<IResolversTypes["Store"], ParentType, ContextType>
+	categories?: Resolver<Array<Maybe<IResolversTypes["Category"]>>, ParentType, ContextType>
+	createdAt?: Resolver<IResolversTypes["Date"], ParentType, ContextType>
+	updatedAt?: Resolver<IResolversTypes["Date"], ParentType, ContextType>
+	__isTypeOf?: isTypeOfResolverFn<ParentType>
+}>
+
 export type IQueryResolvers<
 	ContextType = ApolloContext,
 	ParentType extends IResolversParentTypes["Query"] = IResolversParentTypes["Query"]
@@ -386,6 +438,20 @@ export type IQueryResolvers<
 		RequireFields<IQueryVerifyUserArgs, "required">
 	>
 	readMyStore?: Resolver<Maybe<IResolversTypes["Store"]>, ParentType, ContextType>
+}>
+
+export type IReviewResolvers<
+	ContextType = ApolloContext,
+	ParentType extends IResolversParentTypes["Review"] = IResolversParentTypes["Review"]
+> = ResolversObject<{
+	_id?: Resolver<IResolversTypes["ID"], ParentType, ContextType>
+	reviewer?: Resolver<IResolversTypes["User"], ParentType, ContextType>
+	rating?: Resolver<IResolversTypes["Int"], ParentType, ContextType>
+	review?: Resolver<IResolversTypes["String"], ParentType, ContextType>
+	editCount?: Resolver<IResolversTypes["Int"], ParentType, ContextType>
+	createdAt?: Resolver<IResolversTypes["Date"], ParentType, ContextType>
+	updatedAt?: Resolver<IResolversTypes["Date"], ParentType, ContextType>
+	__isTypeOf?: isTypeOfResolverFn<ParentType>
 }>
 
 export type IS3PayloadResolvers<
@@ -408,7 +474,7 @@ export type IStoreResolvers<
 	image?: Resolver<Maybe<IResolversTypes["String"]>, ParentType, ContextType>
 	location?: Resolver<IResolversTypes["String"], ParentType, ContextType>
 	tagline?: Resolver<IResolversTypes["String"], ParentType, ContextType>
-	manager?: Resolver<IResolversTypes["String"], ParentType, ContextType>
+	manager?: Resolver<IResolversTypes["User"], ParentType, ContextType>
 	createdAt?: Resolver<IResolversTypes["Date"], ParentType, ContextType>
 	updatedAt?: Resolver<IResolversTypes["Date"], ParentType, ContextType>
 	__isTypeOf?: isTypeOfResolverFn<ParentType>
@@ -432,7 +498,9 @@ export type IResolvers<ContextType = ApolloContext> = ResolversObject<{
 	Date?: GraphQLScalarType
 	DecodedUser?: IDecodedUserResolvers<ContextType>
 	Mutation?: IMutationResolvers<ContextType>
+	Product?: IProductResolvers<ContextType>
 	Query?: IQueryResolvers<ContextType>
+	Review?: IReviewResolvers<ContextType>
 	S3Payload?: IS3PayloadResolvers<ContextType>
 	Store?: IStoreResolvers<ContextType>
 	User?: IUserResolvers<ContextType>
@@ -458,7 +526,7 @@ export type IStoreDb = {
 	image?: Maybe<string>
 	location: string
 	tagline: string
-	manager: string
+	manager: IUserDb["_id"]
 	createdAt: Date
 	updatedAt: Date
 }
@@ -477,7 +545,31 @@ export type ICategoryDb = {
 	_id: ObjectId
 	name: string
 	slug: string
-	parent: string
+	level: number
+	createdAt: Date
+	updatedAt: Date
+}
+
+export type IReviewDb = {
+	_id: ObjectId
+	reviewer: IUserDb["_id"]
+	rating: number
+	review: string
+	editCount: number
+	createdAt: Date
+	updatedAt: Date
+}
+
+export type IProductDb = {
+	_id: ObjectId
+	name: string
+	price: number
+	discount: number
+	description: string
+	sizes: Array<Maybe<string>>
+	colors: Array<Maybe<string>>
+	store: IStoreDb["_id"]
+	categories: Array<Maybe<ICategoryDb["_id"]>>
 	createdAt: Date
 	updatedAt: Date
 }

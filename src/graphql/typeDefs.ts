@@ -1,4 +1,4 @@
-import { gql } from "apollo-server-express"
+import { gql } from "apollo-server"
 
 const typeDefs = gql`
 	scalar Date
@@ -26,7 +26,7 @@ const typeDefs = gql`
 		image: String @column
 		location: String! @column
 		tagline: String! @column
-		manager: String! @column
+		manager: User! @link
 		createdAt: Date! @column
 		updatedAt: Date! @column
 	}
@@ -35,7 +35,31 @@ const typeDefs = gql`
 		_id: ID! @id
 		name: String! @column
 		slug: String! @column
-		parent: String! @column
+		level: Int! @column
+		createdAt: Date! @column
+		updatedAt: Date! @column
+	}
+
+	type Review @entity {
+		_id: ID! @id
+		reviewer: User! @link
+		rating: Int! @column
+		review: String! @column
+		editCount: Int! @column
+		createdAt: Date! @column
+		updatedAt: Date! @column
+	}
+
+	type Product @entity {
+		_id: ID! @id
+		name: String! @column
+		price: Float! @column
+		discount: Float! @column
+		description: String! @column
+		sizes: [String]! @column
+		colors: [String]! @column
+		store: Store! @link
+		categories: [Category]! @link
 		createdAt: Date! @column
 		updatedAt: Date! @column
 	}

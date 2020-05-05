@@ -1,5 +1,5 @@
 import bcrypt from "bcryptjs"
-import { ApolloError } from "apollo-server-express"
+import { ApolloError } from "apollo-server"
 import { validateEmail, getToken, setAuthCookie, clearAuthCookie } from "../../controllers/auth"
 import { IMutationResolvers, IQueryResolvers } from "../../typings/types"
 import { UnauthorizedError } from "../../helpers/error"
@@ -13,7 +13,7 @@ export const authQueries: IQueryResolvers = {
 		} else {
 			return ctx.user
 		}
-	}
+	},
 }
 
 export const authMutations: IMutationResolvers = {
@@ -57,5 +57,5 @@ export const authMutations: IMutationResolvers = {
 		const { res } = ctx
 		clearAuthCookie(res)
 		return "User logged out successfully"
-	}
+	},
 }

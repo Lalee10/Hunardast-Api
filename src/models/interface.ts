@@ -1,8 +1,6 @@
 import { Model, Schema, Document } from "mongoose"
-import { IReview } from "./review"
-import { IProduct } from "./product"
 import { Request, Response } from "express"
-import { IUserDb, ICategoryDb, IStoreDb } from "../typings/types"
+import { IUserDb, ICategoryDb, IStoreDb, IProductDb, IReviewDb } from "../typings/types"
 
 export interface Timestamp {
 	createdAt: Date
@@ -13,8 +11,8 @@ export interface CoreDatabase {
 	Category: Model<ICategoryDb & Document>
 	User: Model<IUserDb & Document>
 	Store: Model<IStoreDb & Document>
-	Product: Model<IProduct>
-	Review: Model<IReview>
+	Product: Model<IProductDb & Document>
+	Review: Model<IReviewDb & Document>
 }
 
 export interface DecodedUser {
