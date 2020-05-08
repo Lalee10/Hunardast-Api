@@ -3,12 +3,6 @@ import { gql } from "apollo-server"
 const typeDefs = gql`
 	scalar Date
 
-	type DecodedUser {
-		_id: String!
-		name: String!
-		email: String!
-	}
-
 	type User @entity(additionalFields: [{ path: "password", type: "string" }]) {
 		_id: ID! @id
 		email: String! @column
@@ -98,7 +92,7 @@ const typeDefs = gql`
 	}
 
 	type Query {
-		verifyUser(required: Boolean!): DecodedUser
+		verifyUser(required: Boolean!): User
 		readMyStore: Store
 	}
 `

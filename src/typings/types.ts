@@ -28,13 +28,6 @@ export type ICategory = {
 	updatedAt: Scalars["Date"]
 }
 
-export type IDecodedUser = {
-	__typename?: "DecodedUser"
-	_id: Scalars["String"]
-	name: Scalars["String"]
-	email: Scalars["String"]
-}
-
 export type IMutation = {
 	__typename?: "Mutation"
 	getSignedUrl: IS3Payload
@@ -86,7 +79,7 @@ export type IProduct = {
 
 export type IQuery = {
 	__typename?: "Query"
-	verifyUser?: Maybe<IDecodedUser>
+	verifyUser?: Maybe<IUser>
 	readMyStore?: Maybe<IStore>
 }
 
@@ -224,12 +217,11 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 export type IResolversTypes = ResolversObject<{
 	Query: ResolverTypeWrapper<{}>
 	Boolean: ResolverTypeWrapper<Scalars["Boolean"]>
-	DecodedUser: ResolverTypeWrapper<IDecodedUser>
-	String: ResolverTypeWrapper<Scalars["String"]>
-	Store: ResolverTypeWrapper<IStore>
-	ID: ResolverTypeWrapper<Scalars["ID"]>
 	User: ResolverTypeWrapper<IUser>
+	ID: ResolverTypeWrapper<Scalars["ID"]>
+	String: ResolverTypeWrapper<Scalars["String"]>
 	Date: ResolverTypeWrapper<Scalars["Date"]>
+	Store: ResolverTypeWrapper<IStore>
 	Mutation: ResolverTypeWrapper<{}>
 	S3Payload: ResolverTypeWrapper<IS3Payload>
 	StoreCreateInput: IStoreCreateInput
@@ -246,12 +238,11 @@ export type IResolversTypes = ResolversObject<{
 export type IResolversParentTypes = ResolversObject<{
 	Query: {}
 	Boolean: Scalars["Boolean"]
-	DecodedUser: IDecodedUser
-	String: Scalars["String"]
-	Store: IStore
-	ID: Scalars["ID"]
 	User: IUser
+	ID: Scalars["ID"]
+	String: Scalars["String"]
 	Date: Scalars["Date"]
+	Store: IStore
 	Mutation: {}
 	S3Payload: IS3Payload
 	StoreCreateInput: IStoreCreateInput
@@ -362,16 +353,6 @@ export interface IDateScalarConfig extends GraphQLScalarTypeConfig<IResolversTyp
 	name: "Date"
 }
 
-export type IDecodedUserResolvers<
-	ContextType = ApolloContext,
-	ParentType extends IResolversParentTypes["DecodedUser"] = IResolversParentTypes["DecodedUser"]
-> = ResolversObject<{
-	_id?: Resolver<IResolversTypes["String"], ParentType, ContextType>
-	name?: Resolver<IResolversTypes["String"], ParentType, ContextType>
-	email?: Resolver<IResolversTypes["String"], ParentType, ContextType>
-	__isTypeOf?: isTypeOfResolverFn<ParentType>
-}>
-
 export type IMutationResolvers<
 	ContextType = ApolloContext,
 	ParentType extends IResolversParentTypes["Mutation"] = IResolversParentTypes["Mutation"]
@@ -432,7 +413,7 @@ export type IQueryResolvers<
 	ParentType extends IResolversParentTypes["Query"] = IResolversParentTypes["Query"]
 > = ResolversObject<{
 	verifyUser?: Resolver<
-		Maybe<IResolversTypes["DecodedUser"]>,
+		Maybe<IResolversTypes["User"]>,
 		ParentType,
 		ContextType,
 		RequireFields<IQueryVerifyUserArgs, "required">
@@ -496,7 +477,6 @@ export type IUserResolvers<
 export type IResolvers<ContextType = ApolloContext> = ResolversObject<{
 	Category?: ICategoryResolvers<ContextType>
 	Date?: GraphQLScalarType
-	DecodedUser?: IDecodedUserResolvers<ContextType>
 	Mutation?: IMutationResolvers<ContextType>
 	Product?: IProductResolvers<ContextType>
 	Query?: IQueryResolvers<ContextType>
@@ -518,6 +498,16 @@ export type IDirectiveResolvers<ContextType = ApolloContext> = ResolversObject<{
 }>
 
 import { ObjectId } from "../models/interface"
+export type IUserDb = {
+	_id: ObjectId
+	email: string
+	name: string
+	permissions: Array<Maybe<string>>
+	createdAt: Date
+	updatedAt: Date
+	password: string
+}
+
 export type IStoreDb = {
 	_id: ObjectId
 	name: string
@@ -529,16 +519,6 @@ export type IStoreDb = {
 	manager: IUserDb["_id"]
 	createdAt: Date
 	updatedAt: Date
-}
-
-export type IUserDb = {
-	_id: ObjectId
-	email: string
-	name: string
-	permissions: Array<Maybe<string>>
-	createdAt: Date
-	updatedAt: Date
-	password: string
 }
 
 export type ICategoryDb = {

@@ -5,13 +5,13 @@ import { IMutationResolvers, IQueryResolvers } from "../../typings/types"
 import { UnauthorizedError } from "../../helpers/error"
 
 export const authQueries: IQueryResolvers = {
-	verifyUser: (root, args, ctx) => {
+	verifyUser: async (root, args, ctx) => {
 		if (args.required && !ctx.user) {
 			throw new UnauthorizedError()
 		} else if (!ctx.user) {
 			return null
 		} else {
-			return ctx.user
+			return await ctx.db.User.findById(ctx.user._id)
 		}
 	},
 }
