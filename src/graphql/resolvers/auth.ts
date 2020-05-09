@@ -1,5 +1,5 @@
 import bcrypt from "bcryptjs"
-import { ApolloError } from "apollo-server"
+import { ApolloError } from "apollo-server-express"
 import { validateEmail, getToken, setAuthCookie, clearAuthCookie } from "../../controllers/auth"
 import { IMutationResolvers, IQueryResolvers } from "../../typings/types"
 import { UnauthorizedError } from "../../helpers/error"

@@ -1,4 +1,4 @@
-import { makeExecutableSchema } from "apollo-server"
+import { makeExecutableSchema } from "apollo-server-express"
 import { DIRECTIVES } from "@graphql-codegen/typescript-mongodb"
 import typeDefs from "./typeDefs"
 

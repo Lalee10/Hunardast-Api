@@ -10,14 +10,20 @@
 	},
 	"dependencies": {
 		"@graphql-codegen/typescript-mongodb": "^1.13.5",
-		"apollo-server": "^2.13.0",
+		"apollo-server-express": "^2.13.0",
 		"aws-sdk": "^2.668.0",
 		"bcryptjs": "^2.4.3",
+		"cors": "^2.8.5",
 		"dotenv": "^8.2.0",
+		"express": "^4.17.1",
 		"graphql": "^14.6.0",
+		"graphql-compose": "^7.14.4",
+		"graphql-compose-mongoose": "^7.3.6",
 		"graphql-iso-date": "^3.6.1",
 		"jsonwebtoken": "^8.5.1",
-		"mongoose": "^5.9.11"
+		"mongoose": "^5.9.11",
+		"serverless": "^1.70.0",
+		"serverless-http": "^2.3.2"
 	},
 	"devDependencies": {
 		"@graphql-codegen/cli": "^1.13.5",

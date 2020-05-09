@@ -13,11 +13,14 @@ plugins:
 provider:
    name: aws
    runtime: nodejs10.x
-   region: eu-central-1
+   region: ap-south-1
    environment:
+      PORT: 4000
       DB_STRING: mongodb+srv://hunardast:Lalee1402.@hunardast-twqgc.azure.mongodb.net/hunardast?retryWrites=true&w=majority
       NODE_ENV: development
       SECRET_KEY: LUFFYISTHEKING:03005006001:NEWGATE_JWT_SECRET
+      AWS_ACCESS_KEY_ID: AKIAVNCEYC67KR2RH33V
+      AWS_SECRET_ACCESS_KEY: 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
 functions:
    graphql:
       handler: src/handler.graphqlHandler
