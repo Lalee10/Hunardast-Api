@@ -4,7 +4,7 @@ import { getSlug } from "../../helpers/string"
 import { IMutationResolvers, IQueryResolvers } from "../../typings/types"
 
 export const storeQueries: IQueryResolvers = {
-	readMyStore: async (root, args, ctx) => {
+	readMyStore: async (root, args, ctx): Promise<any> => {
 		const { db, user } = ctx
 		if (!user) throw new UnauthorizedError(401, "User must be logged in to view their store")
 		const store = await db.Store.findOne({ manager: user._id })
@@ -13,7 +13,7 @@ export const storeQueries: IQueryResolvers = {
 }
 
 export const storeMutations: IMutationResolvers = {
-	createStore: async (root, { data }, ctx) => {
+	createStore: async (root, { data }, ctx): Promise<any> => {
 		const { name } = data
 		const { db, user } = ctx
 
@@ -31,15 +31,14 @@ export const storeMutations: IMutationResolvers = {
 
 		return created
 	},
-	updateStore: async (root, { data }, { db, user }) => {
+	updateStore: async (root, { data }, { db, user }): Promise<any> => {
 		if (!user) throw new UnauthorizedError(401, "User must be logged in to update their store")
 
 		const store = await db.Store.findOne({ manager: user._id })
 		if (!store) throw new ApolloError("User has no store linked to their account")
-
 		const slug = data.name ? getSlug(data.name) : store.slug
 		await store.updateOne({ ...data, slug })
 
-		return await db.Store.findById(store._id)
+		return await db.Store.findById(store._id).lean()
 	},
 }

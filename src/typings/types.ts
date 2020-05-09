@@ -497,9 +497,9 @@ export type IDirectiveResolvers<ContextType = ApolloContext> = ResolversObject<{
 	map?: IMapDirectiveResolver<any, any, ContextType>
 }>
 
-import { ObjectId } from "../models/interface"
+import { ObjectID } from "mongodb"
 export type IUserDb = {
-	_id: ObjectId
+	_id: ObjectID
 	email: string
 	name: string
 	permissions: Array<Maybe<string>>
@@ -509,7 +509,7 @@ export type IUserDb = {
 }
 
 export type IStoreDb = {
-	_id: ObjectId
+	_id: ObjectID
 	name: string
 	slug: string
 	banner?: Maybe<string>
@@ -522,7 +522,7 @@ export type IStoreDb = {
 }
 
 export type ICategoryDb = {
-	_id: ObjectId
+	_id: ObjectID
 	name: string
 	slug: string
 	level: number
@@ -531,7 +531,7 @@ export type ICategoryDb = {
 }
 
 export type IReviewDb = {
-	_id: ObjectId
+	_id: ObjectID
 	reviewer: IUserDb["_id"]
 	rating: number
 	review: string
@@ -541,7 +541,7 @@ export type IReviewDb = {
 }
 
 export type IProductDb = {
-	_id: ObjectId
+	_id: ObjectID
 	name: string
 	price: number
 	discount: number

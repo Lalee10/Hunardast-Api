@@ -6,7 +6,6 @@ documents: null
 config:
    useIndexSignature: true
    contextType: ../models/interface#ApolloContext
-   objectIdType: ObjectId#../models/interface
    typesPrefix: I
    dbTypeSuffix: Db
    scalars:

@@ -32,12 +32,12 @@ export function getToken(user: IUserDb) {
 	return token
 }
 
-export function setAuthCookie(res: ServerResponse, token: string) {
+export function setAuthCookie(res: any, token: string) {
 	res.cookie(authCookieName, token, { secure: isProduction, maxAge: cookieMaxAge, httpOnly: true })
 	res.cookie(loginCookieName, true, { secure: isProduction, maxAge: cookieMaxAge })
 }
 
-export function clearAuthCookie(res: ServerResponse) {
+export function clearAuthCookie(res: any) {
 	res.clearCookie(authCookieName)
 	res.clearCookie(loginCookieName)
 }
