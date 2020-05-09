@@ -1,6 +1,13 @@
-import mongoose, { Schema } from "mongoose"
+import mongoose, { Schema, Document } from "mongoose"
 import { composeWithMongoose } from "graphql-compose-mongoose"
 import { schemaComposer } from "graphql-compose"
+
+export interface ICategory extends Document {
+	name: string
+	slug: string
+	createdAt: Date
+	updatedAt: Date
+}
 
 const categorySchema = new Schema(
 	{
@@ -22,8 +29,11 @@ const categorySchema = new Schema(
 	{ timestamps: true }
 )
 
-const Category = mongoose.model("Category", categorySchema)
-const CategoryTC = composeWithMongoose(Category)
+export const CategoryModel = mongoose.model<ICategory>(
+	"Category",
+	categorySchema
+)
+const CategoryTC = composeWithMongoose(CategoryModel)
 
 schemaComposer.Query.addFields({
 	categoryById: CategoryTC.getResolver("findById"),

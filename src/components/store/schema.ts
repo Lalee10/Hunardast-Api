@@ -1,34 +1,28 @@
-import mongoose, { Schema } from "mongoose"
+import mongoose, { Schema, Document } from "mongoose"
 import { composeWithMongoose } from "graphql-compose-mongoose"
 import { schemaComposer } from "graphql-compose"
+import { IUser } from "../user/schema"
+
+export interface IStore extends Document {
+	name: string
+	slug: string
+	logo: string
+	banner: string
+	location: string
+	tagline: string
+	manager: IUser["_id"]
+	createdAt: Date
+	updatedAt: Date
+}
 
 const storeSchema: Schema = new Schema(
 	{
-		name: {
-			type: String,
-			required: true,
-			unique: true,
-			trim: true,
-		},
-		slug: {
-			type: String,
-			required: true,
-			unique: true,
-			trim: true,
-		},
-		logo: {
-			type: String,
-		},
-		banner: {
-			type: String,
-		},
-		location: {
-			type: String,
-			required: true,
-		},
-		tagline: {
-			type: String,
-		},
+		name: { type: String, required: true, unique: true, trim: true },
+		slug: { type: String, required: true, unique: true, trim: true },
+		logo: { type: String },
+		banner: { type: String },
+		location: { type: String, required: true },
+		tagline: { type: String },
 		manager: {
 			type: Schema.Types.ObjectId,
 			ref: "User",
@@ -39,8 +33,9 @@ const storeSchema: Schema = new Schema(
 	{ timestamps: true }
 )
 
-const Store = mongoose.model("Store", storeSchema)
-const StoreTC = composeWithMongoose(Store)
+export const StoreModel = mongoose.model<IStore>("Store", storeSchema)
+
+const StoreTC = composeWithMongoose(StoreModel)
 
 schemaComposer.Query.addFields({
 	storeById: StoreTC.getResolver("findById"),

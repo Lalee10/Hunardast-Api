@@ -5,17 +5,14 @@ require:
 documents: null
 config:
    useIndexSignature: true
-   contextType: ../models/interface#ApolloContext
-   typesPrefix: I
-   dbTypeSuffix: Db
+   typesPrefix: IGen
    scalars:
       Date: Date
 generates:
    src/typings/types.ts:
       plugins:
          - "typescript"
-         - "typescript-resolvers"
-         - "typescript-mongodb"
+
 hooks:
    afterAllFileWrite:
       - prettier --write

@@ -1,4 +1,5 @@
 import jwt from "jsonwebtoken"
+import { Response } from "express"
 
 const secretKey = `${process.env.SECRET_KEY}`
 const authCookieName = "authTokenHD"

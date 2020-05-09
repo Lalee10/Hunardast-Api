@@ -15,11 +15,7 @@ export interface IUser extends Document {
 
 const userSchema = new Schema(
 	{
-		name: {
-			type: String,
-			required: true,
-			trim: true,
-		},
+		name: { type: String, required: true, trim: true },
 		email: {
 			type: String,
 			required: true,
@@ -27,20 +23,14 @@ const userSchema = new Schema(
 			trim: true,
 			lowercase: true,
 		},
-		password: {
-			type: String,
-			required: true,
-		},
-		permissions: {
-			type: String,
-			lowercase: true,
-			trim: true,
-		},
+		password: { type: String, required: true },
+		permissions: { type: String, lowercase: true, trim: true },
 	},
 	{ timestamps: true }
 )
 
 export const UserModel = mongoose.model<IUser>("User", userSchema)
+
 const UserTC = composeWithMongoose(UserModel)
 
 UserTC.removeField("password")

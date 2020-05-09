@@ -1,9 +1,20 @@
-import { makeExecutableSchema } from "apollo-server-express"
-import { DIRECTIVES } from "@graphql-codegen/typescript-mongodb"
-import typeDefs from "./typeDefs"
+import { mergeSchemas } from "apollo-server-express"
+import categorySchemaGQL from "../components/category/schema"
+import userSchemaGQL from "../components/user/schema"
+import storeSchemaGQL from "../components/store/schema"
+import productSchemaGQL from "../components/product/schema"
+import reviewSchemaGQL from "../components/review/schema"
+import s3SchemaGQL from "../components/s3/schema"
 
-const schema = makeExecutableSchema({
-	typeDefs: [DIRECTIVES, typeDefs],
+const composedSchema = mergeSchemas({
+	schemas: [
+		userSchemaGQL,
+		categorySchemaGQL,
+		storeSchemaGQL,
+		reviewSchemaGQL,
+		productSchemaGQL,
+		s3SchemaGQL,
+	],
 })
 
-export default schema
+export default composedSchema
