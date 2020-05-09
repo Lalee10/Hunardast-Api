@@ -24,7 +24,7 @@ const userSchema = new Schema(
 			lowercase: true,
 		},
 		password: { type: String, required: true },
-		permissions: { type: String, lowercase: true, trim: true },
+		permissions: { type: [String], lowercase: true, trim: true, default: [] },
 	},
 	{ timestamps: true }
 )
@@ -35,25 +35,16 @@ const UserTC = composeWithMongoose(UserModel)
 
 UserTC.removeField("password")
 
-const DecodedUser = schemaComposer.createObjectTC({
-	name: "DecodedUser",
-	fields: {
-		_id: "String!",
-		name: "String!",
-		email: "String!",
-	},
-})
-
 UserTC.addResolver({
 	name: "registerUser",
-	type: UserTC,
+	type: "User!",
 	args: { name: "String!", email: "String!", password: "String!" },
 	resolve: registerResolver,
 })
 
 UserTC.addResolver({
 	name: "loginUser",
-	type: UserTC,
+	type: "User!",
 	args: { email: "String!", password: "String!" },
 	resolve: loginResolver,
 })
@@ -67,7 +58,7 @@ UserTC.addResolver({
 UserTC.addResolver({
 	name: "verifyUser",
 	args: { required: "Boolean!" },
-	type: DecodedUser,
+	type: UserTC,
 	resolve: verifyUser,
 })
 

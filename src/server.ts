@@ -1,4 +1,5 @@
 import dotenv from "dotenv"
+console.time("startup")
 dotenv.config()
 import { ApolloServer } from "apollo-server-express"
 import app from "./app"
@@ -18,6 +19,7 @@ server.applyMiddleware({
 	cors: { credentials: true, origin: true },
 })
 
-app.listen({ port: process.env.PORT || 4000 }, () =>
+app.listen({ port: process.env.PORT || 4000 }, () => {
 	console.log(`🚀 Server ready at http://localhost:4000${server.graphqlPath}`)
-)
+	console.timeEnd("startup")
+})

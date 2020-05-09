@@ -65,12 +65,12 @@ export function logoutResolver({ source, args, context, info }) {
 	return true
 }
 
-export function verifyUser({ source, args, context, info }) {
+export async function verifyUser({ source, args, context, info }) {
 	if (args.required && !context.user) {
 		throw new Error("Invalid authorization!")
 	} else if (!context.user) {
 		return null
 	} else {
-		return context.user
+		return await context.db.User.findById(context.user._id)
 	}
 }

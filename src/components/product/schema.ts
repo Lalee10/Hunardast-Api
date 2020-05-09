@@ -11,22 +11,33 @@ export interface IProduct extends Document {
 	images: string[]
 	description: string
 	store: IStore["_id"]
-	categories: [ICategory["_id"]]
+	categories: string[]
 	createdAt: Date
 	updatedAt: Date
+	renewedAt: Date
+	renewalType: "auto" | "manual"
 }
 
 const productSchema: Schema = new Schema(
 	{
 		name: { type: String, required: true },
 		price: { type: Number, required: true },
-		images: { type: [String], required: true },
+		images: { type: [String], default: [] },
 		discount: { type: Number },
 		description: { type: String, required: true },
 		store: { type: Schema.Types.ObjectId, ref: "Store", required: true },
-		categories: [
-			{ type: Schema.Types.ObjectId, ref: "Category", required: true },
-		],
+		categories: {
+			type: [String],
+			required: true,
+			default: ["Crocheted Crafts"],
+		},
+		renewedAt: { type: Date, default: Date.now },
+		renewalType: {
+			type: String,
+			enum: ["auto", "manual"],
+			required: true,
+			default: "manual",
+		},
 	},
 	{ timestamps: true }
 )
