@@ -1,6 +1,6 @@
 import s3 from "./s3"
 
-export async function signedUrlResolver({ source, args, context, info }) {
+export async function signedUrlResolver({ args }) {
 	const { fileName, fileType } = args
 	const s3Bucket = "hunardast"
 	const params = {

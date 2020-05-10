@@ -10,8 +10,10 @@ export interface IProduct extends Document {
 	discount: number
 	images: string[]
 	description: string
+	sizes: string[]
+	colors: string[]
 	store: IStore["_id"]
-	categories: string[]
+	category: string
 	createdAt: Date
 	updatedAt: Date
 	renewedAt: Date
@@ -25,19 +27,12 @@ const productSchema: Schema = new Schema(
 		images: { type: [String], default: [] },
 		discount: { type: Number },
 		description: { type: String, required: true },
+		sizes: { type: [String], default: [] },
+		colors: { type: [String], default: [] },
 		store: { type: Schema.Types.ObjectId, ref: "Store", required: true },
-		categories: {
-			type: [String],
-			required: true,
-			default: ["Crocheted Crafts"],
-		},
+		category: { type: String, required: true },
 		renewedAt: { type: Date, default: Date.now },
-		renewalType: {
-			type: String,
-			enum: ["auto", "manual"],
-			required: true,
-			default: "manual",
-		},
+		renewalType: { type: String, required: true, default: "manual" },
 	},
 	{ timestamps: true }
 )
@@ -56,8 +51,15 @@ schemaComposer.Query.addFields({
 	productPagination: ProductTC.getResolver("pagination"),
 })
 
+const productCreateOne = ProductTC.getResolver("createOne").wrap(
+	(newResolver) => {
+		newResolver.setType(newResolver.type.getTypeNonNull())
+		return newResolver
+	}
+)
+
 schemaComposer.Mutation.addFields({
-	productCreateOne: ProductTC.getResolver("createOne"),
+	productCreateOne: productCreateOne,
 	productCreateMany: ProductTC.getResolver("createMany"),
 	productUpdateById: ProductTC.getResolver("updateById"),
 	productUpdateOne: ProductTC.getResolver("updateOne"),

@@ -1,7 +1,7 @@
 import { schemaComposer } from "graphql-compose"
 import { signedUrlResolver } from "./resolvers"
 
-schemaComposer.createObjectTC({
+const S3Payload = schemaComposer.createObjectTC({
 	name: "S3Payload",
 	fields: {
 		signedRequest: "String!",
@@ -9,12 +9,15 @@ schemaComposer.createObjectTC({
 	},
 })
 
+const getSignedUrlResolver = schemaComposer.createResolver({
+	name: "getSignedUrl",
+	type: S3Payload.getTypeNonNull(),
+	args: { fileName: "String!", fileType: "String!" },
+	resolve: signedUrlResolver,
+})
+
 schemaComposer.Mutation.addFields({
-	getSignedUrl: {
-		type: `S3Payload!`,
-		args: { fileName: "String!", fileType: "String!" },
-		resolve: signedUrlResolver,
-	},
+	getSignedUrl: getSignedUrlResolver,
 })
 
 const s3SchemaGQL = schemaComposer.buildSchema()

@@ -1,3 +1,4 @@
+import { ApolloError, AuthenticationError } from "apollo-server-express"
 import mongoose, { Schema, Document } from "mongoose"
 import { composeWithMongoose } from "graphql-compose-mongoose"
 import { schemaComposer } from "graphql-compose"
@@ -37,7 +38,21 @@ export const StoreModel = mongoose.model<IStore>("Store", storeSchema)
 
 const StoreTC = composeWithMongoose(StoreModel)
 
+StoreTC.addResolver({
+	name: "readMyStore",
+	type: StoreTC.getTypeNonNull(),
+	resolve: async ({ context }) => {
+		if (!context.user) throw new AuthenticationError("User not logged in")
+		const store = await context.db.Store.findOne({
+			manager: context.user._id,
+		})
+		if (!store) throw new ApolloError("No store found")
+		return store
+	},
+})
+
 schemaComposer.Query.addFields({
+	readMyStore: StoreTC.getResolver("readMyStore"),
 	storeById: StoreTC.getResolver("findById"),
 	storeByIds: StoreTC.getResolver("findByIds"),
 	storeOne: StoreTC.getResolver("findOne"),
