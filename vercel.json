@@ -1,0 +1,12 @@
+{
+	"version": 2,
+	"alias": ["hunardast-api"],
+	"env": {
+		"DB_STRING": "mongodb+srv://hunardast:Lalee1402.@hunardast-twqgc.azure.mongodb.net/hunardast?retryWrites=true&w=majority",
+		"PORT": "4000",
+		"NODE_ENV": "development",
+		"SECRET_KEY": "LUFFYISTHEKING:03005006001:NEWGATE_JWT_SECRET",
+		"HD_S3_ACCESS_ID": "AKIAVNCEYC67KR2RH33V",
+		"HD_S3_ACCESS_KEY": "hw3efCAtE+WP9uAAlZfYhEITp1SzsGfFqYj0Tbl7"
+	}
+}

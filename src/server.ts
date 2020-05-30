@@ -13,6 +13,7 @@ const server = new ApolloServer({
 		endpoint: "/graphql",
 	},
 })
+console.timeEnd("startup")
 
 server.applyMiddleware({
 	app: app,
@@ -21,5 +22,4 @@ server.applyMiddleware({
 
 app.listen({ port: process.env.PORT || 4000 }, () => {
 	console.log(`🚀 Server ready at http://localhost:4000${server.graphqlPath}`)
-	console.timeEnd("startup")
 })

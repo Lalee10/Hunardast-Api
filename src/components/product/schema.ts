@@ -43,12 +43,12 @@ const ProductTC = composeWithMongoose(ProductModel)
 
 schemaComposer.Query.addFields({
 	productById: ProductTC.getResolver("findById"),
-	productByIds: ProductTC.getResolver("findByIds"),
-	productOne: ProductTC.getResolver("findOne"),
-	productMany: ProductTC.getResolver("findMany"),
-	productCount: ProductTC.getResolver("count"),
-	productConnection: ProductTC.getResolver("connection"),
-	productPagination: ProductTC.getResolver("pagination"),
+	// productByIds: ProductTC.getResolver("findByIds"),
+	// productOne: ProductTC.getResolver("findOne"),
+	// productMany: ProductTC.getResolver("findMany"),
+	// productCount: ProductTC.getResolver("count"),
+	// productConnection: ProductTC.getResolver("connection"),
+	// productPagination: ProductTC.getResolver("pagination"),
 })
 
 const productCreateOne = ProductTC.getResolver("createOne").wrap(
@@ -60,13 +60,13 @@ const productCreateOne = ProductTC.getResolver("createOne").wrap(
 
 schemaComposer.Mutation.addFields({
 	productCreateOne: productCreateOne,
-	productCreateMany: ProductTC.getResolver("createMany"),
+	// productCreateMany: ProductTC.getResolver("createMany"),
 	productUpdateById: ProductTC.getResolver("updateById"),
-	productUpdateOne: ProductTC.getResolver("updateOne"),
-	productUpdateMany: ProductTC.getResolver("updateMany"),
-	productRemoveById: ProductTC.getResolver("removeById"),
-	productRemoveOne: ProductTC.getResolver("removeOne"),
-	productRemoveMany: ProductTC.getResolver("removeMany"),
+	// productUpdateOne: ProductTC.getResolver("updateOne"),
+	// productUpdateMany: ProductTC.getResolver("updateMany"),
+	// productRemoveById: ProductTC.getResolver("removeById"),
+	// productRemoveOne: ProductTC.getResolver("removeOne"),
+	// productRemoveMany: ProductTC.getResolver("removeMany"),
 })
 
 const productSchemaGQL = schemaComposer.buildSchema()

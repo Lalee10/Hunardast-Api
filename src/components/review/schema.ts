@@ -29,24 +29,24 @@ export const ReviewModel = mongoose.model<IReview>("Review", reviewSchema)
 const ReviewTC = composeWithMongoose(ReviewModel)
 
 schemaComposer.Query.addFields({
-	reviewById: ReviewTC.getResolver("findById"),
-	reviewByIds: ReviewTC.getResolver("findByIds"),
-	reviewOne: ReviewTC.getResolver("findOne"),
-	reviewMany: ReviewTC.getResolver("findMany"),
-	reviewCount: ReviewTC.getResolver("count"),
-	reviewConnection: ReviewTC.getResolver("connection"),
-	reviewPagination: ReviewTC.getResolver("pagination"),
+	// reviewById: ReviewTC.getResolver("findById"),
+	// reviewByIds: ReviewTC.getResolver("findByIds"),
+	// reviewOne: ReviewTC.getResolver("findOne"),
+	// reviewMany: ReviewTC.getResolver("findMany"),
+	// reviewCount: ReviewTC.getResolver("count"),
+	// reviewConnection: ReviewTC.getResolver("connection"),
+	// reviewPagination: ReviewTC.getResolver("pagination"),
 })
 
 schemaComposer.Mutation.addFields({
-	reviewCreateOne: ReviewTC.getResolver("createOne"),
-	reviewCreateMany: ReviewTC.getResolver("createMany"),
-	reviewUpdateById: ReviewTC.getResolver("updateById"),
-	reviewUpdateOne: ReviewTC.getResolver("updateOne"),
-	reviewUpdateMany: ReviewTC.getResolver("updateMany"),
-	reviewRemoveById: ReviewTC.getResolver("removeById"),
-	reviewRemoveOne: ReviewTC.getResolver("removeOne"),
-	reviewRemoveMany: ReviewTC.getResolver("removeMany"),
+	// reviewCreateOne: ReviewTC.getResolver("createOne"),
+	// reviewCreateMany: ReviewTC.getResolver("createMany"),
+	// reviewUpdateById: ReviewTC.getResolver("updateById"),
+	// reviewUpdateOne: ReviewTC.getResolver("updateOne"),
+	// reviewUpdateMany: ReviewTC.getResolver("updateMany"),
+	// reviewRemoveById: ReviewTC.getResolver("removeById"),
+	// reviewRemoveOne: ReviewTC.getResolver("removeOne"),
+	// reviewRemoveMany: ReviewTC.getResolver("removeMany"),
 })
 
 const reviewSchemaGQL = schemaComposer.buildSchema()
