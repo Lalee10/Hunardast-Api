@@ -1,4 +1,4 @@
-import { ApolloError } from "apollo-server"
+import { ApolloError } from "apollo-server-micro"
 import { UnauthorizedError } from "../../helpers/error"
 import { getSlug } from "../../helpers/string"
 import { IMutationResolvers, IQueryResolvers } from "../../typings/types"

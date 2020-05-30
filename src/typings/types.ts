@@ -10,12 +10,20 @@ export type Scalars = {
 	Boolean: boolean
 	Int: number
 	Float: number
+	/** A date and time, represented as an ISO-8601 string */
 	Date: Date
+	/** The `Upload` scalar type represents a file upload. */
+	Upload: any
 }
 
 export type IAdditionalEntityFields = {
 	path?: Maybe<Scalars["String"]>
 	type?: Maybe<Scalars["String"]>
+}
+
+export enum ICacheControlScope {
+	Public = "PUBLIC",
+	Private = "PRIVATE",
 }
 
 export type ICategory = {
@@ -232,6 +240,8 @@ export type IResolversTypes = ResolversObject<{
 	Review: ResolverTypeWrapper<IReview>
 	Product: ResolverTypeWrapper<IProduct>
 	Float: ResolverTypeWrapper<Scalars["Float"]>
+	CacheControlScope: ICacheControlScope
+	Upload: ResolverTypeWrapper<Scalars["Upload"]>
 }>
 
 /** Mapping between all available schema types and the resolvers parents */
@@ -253,88 +263,9 @@ export type IResolversParentTypes = ResolversObject<{
 	Review: IReview
 	Product: IProduct
 	Float: Scalars["Float"]
+	CacheControlScope: ICacheControlScope
+	Upload: Scalars["Upload"]
 }>
-
-export type IUnionDirectiveArgs = {
-	discriminatorField?: Maybe<Scalars["String"]>
-	additionalFields?: Maybe<Array<Maybe<IAdditionalEntityFields>>>
-}
-
-export type IUnionDirectiveResolver<
-	Result,
-	Parent,
-	ContextType = ApolloContext,
-	Args = IUnionDirectiveArgs
-> = DirectiveResolverFn<Result, Parent, ContextType, Args>
-
-export type IAbstractEntityDirectiveArgs = {
-	discriminatorField: Scalars["String"]
-	additionalFields?: Maybe<Array<Maybe<IAdditionalEntityFields>>>
-}
-
-export type IAbstractEntityDirectiveResolver<
-	Result,
-	Parent,
-	ContextType = ApolloContext,
-	Args = IAbstractEntityDirectiveArgs
-> = DirectiveResolverFn<Result, Parent, ContextType, Args>
-
-export type IEntityDirectiveArgs = {
-	embedded?: Maybe<Scalars["Boolean"]>
-	additionalFields?: Maybe<Array<Maybe<IAdditionalEntityFields>>>
-}
-
-export type IEntityDirectiveResolver<
-	Result,
-	Parent,
-	ContextType = ApolloContext,
-	Args = IEntityDirectiveArgs
-> = DirectiveResolverFn<Result, Parent, ContextType, Args>
-
-export type IColumnDirectiveArgs = { overrideType?: Maybe<Scalars["String"]> }
-
-export type IColumnDirectiveResolver<
-	Result,
-	Parent,
-	ContextType = ApolloContext,
-	Args = IColumnDirectiveArgs
-> = DirectiveResolverFn<Result, Parent, ContextType, Args>
-
-export type IIdDirectiveArgs = {}
-
-export type IIdDirectiveResolver<
-	Result,
-	Parent,
-	ContextType = ApolloContext,
-	Args = IIdDirectiveArgs
-> = DirectiveResolverFn<Result, Parent, ContextType, Args>
-
-export type ILinkDirectiveArgs = { overrideType?: Maybe<Scalars["String"]> }
-
-export type ILinkDirectiveResolver<
-	Result,
-	Parent,
-	ContextType = ApolloContext,
-	Args = ILinkDirectiveArgs
-> = DirectiveResolverFn<Result, Parent, ContextType, Args>
-
-export type IEmbeddedDirectiveArgs = {}
-
-export type IEmbeddedDirectiveResolver<
-	Result,
-	Parent,
-	ContextType = ApolloContext,
-	Args = IEmbeddedDirectiveArgs
-> = DirectiveResolverFn<Result, Parent, ContextType, Args>
-
-export type IMapDirectiveArgs = { path: Scalars["String"] }
-
-export type IMapDirectiveResolver<
-	Result,
-	Parent,
-	ContextType = ApolloContext,
-	Args = IMapDirectiveArgs
-> = DirectiveResolverFn<Result, Parent, ContextType, Args>
 
 export type ICategoryResolvers<
 	ContextType = ApolloContext,
@@ -461,6 +392,10 @@ export type IStoreResolvers<
 	__isTypeOf?: isTypeOfResolverFn<ParentType>
 }>
 
+export interface IUploadScalarConfig extends GraphQLScalarTypeConfig<IResolversTypes["Upload"], any> {
+	name: "Upload"
+}
+
 export type IUserResolvers<
 	ContextType = ApolloContext,
 	ParentType extends IResolversParentTypes["User"] = IResolversParentTypes["User"]
@@ -483,73 +418,6 @@ export type IResolvers<ContextType = ApolloContext> = ResolversObject<{
 	Review?: IReviewResolvers<ContextType>
 	S3Payload?: IS3PayloadResolvers<ContextType>
 	Store?: IStoreResolvers<ContextType>
+	Upload?: GraphQLScalarType
 	User?: IUserResolvers<ContextType>
 }>
-
-export type IDirectiveResolvers<ContextType = ApolloContext> = ResolversObject<{
-	union?: IUnionDirectiveResolver<any, any, ContextType>
-	abstractEntity?: IAbstractEntityDirectiveResolver<any, any, ContextType>
-	entity?: IEntityDirectiveResolver<any, any, ContextType>
-	column?: IColumnDirectiveResolver<any, any, ContextType>
-	id?: IIdDirectiveResolver<any, any, ContextType>
-	link?: ILinkDirectiveResolver<any, any, ContextType>
-	embedded?: IEmbeddedDirectiveResolver<any, any, ContextType>
-	map?: IMapDirectiveResolver<any, any, ContextType>
-}>
-
-import { ObjectId } from "../models/interface"
-export type IUserDb = {
-	_id: ObjectId
-	email: string
-	name: string
-	permissions: Array<Maybe<string>>
-	createdAt: Date
-	updatedAt: Date
-	password: string
-}
-
-export type IStoreDb = {
-	_id: ObjectId
-	name: string
-	slug: string
-	banner?: Maybe<string>
-	image?: Maybe<string>
-	location: string
-	tagline: string
-	manager: IUserDb["_id"]
-	createdAt: Date
-	updatedAt: Date
-}
-
-export type ICategoryDb = {
-	_id: ObjectId
-	name: string
-	slug: string
-	level: number
-	createdAt: Date
-	updatedAt: Date
-}
-
-export type IReviewDb = {
-	_id: ObjectId
-	reviewer: IUserDb["_id"]
-	rating: number
-	review: string
-	editCount: number
-	createdAt: Date
-	updatedAt: Date
-}
-
-export type IProductDb = {
-	_id: ObjectId
-	name: string
-	price: number
-	discount: number
-	description: string
-	sizes: Array<Maybe<string>>
-	colors: Array<Maybe<string>>
-	store: IStoreDb["_id"]
-	categories: Array<Maybe<ICategoryDb["_id"]>>
-	createdAt: Date
-	updatedAt: Date
-}

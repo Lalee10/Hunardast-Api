@@ -12,3 +12,5 @@ package-lock.json
 schema.gql
 now.json
 .now
+.vercel
+.next

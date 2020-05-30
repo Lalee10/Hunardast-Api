@@ -1,6 +1,9 @@
 import { Model, Schema, Document } from "mongoose"
 import { Request, Response } from "express"
-import { IUserDb, ICategoryDb, IStoreDb, IProductDb, IReviewDb } from "../typings/types"
+import { IUserDb } from "./user"
+import { IStoreDb } from "./store"
+import { IProductDb } from "./product"
+import { IReviewDb } from "./review"
 
 export interface Timestamp {
 	createdAt: Date
@@ -8,7 +11,6 @@ export interface Timestamp {
 }
 
 export interface CoreDatabase {
-	Category: Model<ICategoryDb & Document>
 	User: Model<IUserDb & Document>
 	Store: Model<IStoreDb & Document>
 	Product: Model<IProductDb & Document>

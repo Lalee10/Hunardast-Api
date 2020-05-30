@@ -1,4 +1,12 @@
-import { Schema } from "mongoose"
+import { Schema, Document } from "mongoose"
+import { Timestamp } from "./interface"
+
+export interface IUserDb extends Document, Timestamp {
+	name: string
+	email: string
+	password: string
+	permissions: string[]
+}
 
 const userSchema: Schema = new Schema(
 	{

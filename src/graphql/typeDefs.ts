@@ -1,61 +1,53 @@
-import { gql } from "apollo-server"
+import gql from "graphql-tag"
 
 const typeDefs = gql`
 	scalar Date
 
-	type User @entity(additionalFields: [{ path: "password", type: "string" }]) {
-		_id: ID! @id
-		email: String! @column
-		name: String! @column
-		permissions: [String]! @column
-		createdAt: Date! @column
-		updatedAt: Date! @column
+	type User {
+		_id: ID!
+		name: String!
+		email: String!
+		permissions: [String]!
+		createdAt: Date!
+		updatedAt: Date!
 	}
 
-	type Store @entity {
-		_id: ID! @id
-		name: String! @column
-		slug: String! @column
-		banner: String @column
-		image: String @column
-		location: String! @column
-		tagline: String! @column
-		manager: User! @link
-		createdAt: Date! @column
-		updatedAt: Date! @column
+	type Store {
+		_id: ID!
+		name: String!
+		slug: String!
+		logo: String
+		banner: String
+		location: String!
+		tagline: String!
+		manager: String!
+		createdAt: Date!
+		updatedAt: Date!
 	}
 
-	type Category @entity {
-		_id: ID! @id
-		name: String! @column
-		slug: String! @column
-		level: Int! @column
-		createdAt: Date! @column
-		updatedAt: Date! @column
+	type Review {
+		_id: ID!
+		reviewer: String!
+		product: String!
+		rating: Int!
+		review: String!
+		editCount: Int!
+		createdAt: Date!
+		updatedAt: Date!
 	}
 
-	type Review @entity {
-		_id: ID! @id
-		reviewer: User! @link
-		rating: Int! @column
-		review: String! @column
-		editCount: Int! @column
-		createdAt: Date! @column
-		updatedAt: Date! @column
-	}
-
-	type Product @entity {
-		_id: ID! @id
-		name: String! @column
-		price: Float! @column
-		discount: Float! @column
-		description: String! @column
-		sizes: [String]! @column
-		colors: [String]! @column
-		store: Store! @link
-		categories: [Category]! @link
-		createdAt: Date! @column
-		updatedAt: Date! @column
+	type Product {
+		_id: ID!
+		name: String!
+		price: Float!
+		discount: Float!
+		category: String!
+		description: String!
+		sizes: [String]!
+		colors: [String]!
+		store: String!
+		createdAt: Date!
+		updatedAt: Date!
 	}
 
 	input StoreCreateInput {
@@ -72,15 +64,7 @@ const typeDefs = gql`
 		tagline: String
 	}
 
-	type S3Payload {
-		signedRequest: String!
-		url: String!
-	}
-
 	type Mutation {
-		# AWS S3
-		getSignedUrl(fileName: String!, fileType: String!): S3Payload!
-
 		# User
 		loginUser(password: String!, email: String!): User!
 		logoutUser: String!

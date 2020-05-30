@@ -1,7 +1,6 @@
 import jwt from "jsonwebtoken"
-import { ApolloError } from "apollo-server"
+import { ApolloError } from "apollo-server-micro"
 import { CoreDatabase } from "../models/interface"
-import { IUserDb } from "../typings/types"
 
 const secretKey = `${process.env.SECRET_KEY}`
 const authCookieName = "authTokenHD"
@@ -24,7 +23,7 @@ export async function validateEmail(db: CoreDatabase, email: string) {
 	}
 }
 
-export function getToken(user: IUserDb) {
+export function getToken(user: any) {
 	const token = jwt.sign({ _id: user._id, name: user.name, email: user.email }, secretKey, {
 		audience: "https://api.hunardast.com",
 		expiresIn: "2 days",
@@ -32,14 +31,15 @@ export function getToken(user: IUserDb) {
 	return token
 }
 
-export function setAuthCookie(res: ServerResponse, token: string) {
-	res.cookie(authCookieName, token, { secure: isProduction, maxAge: cookieMaxAge, httpOnly: true })
-	res.cookie(loginCookieName, true, { secure: isProduction, maxAge: cookieMaxAge })
+export function setAuthCookie(res: any, token: string) {
+	res.setHeader("Set-Cookie", [
+		`${authCookieName}=${token}; HttpOnly; Max-Age=${cookieMaxAge};`,
+		`${loginCookieName}=${true}; Max-Age=${cookieMaxAge};`,
+	])
 }
 
-export function clearAuthCookie(res: ServerResponse) {
-	res.clearCookie(authCookieName)
-	res.clearCookie(loginCookieName)
+export function clearAuthCookie(res: any) {
+	res.setHeader("Set-Cookie", [`${authCookieName}=; Max-Age=${0};`, `${loginCookieName}=; Max-Age=${0};`])
 }
 
 export function getCookie(cookies: string, name: string) {
