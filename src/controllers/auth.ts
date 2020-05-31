@@ -33,8 +33,8 @@ export function getToken(user: any) {
 
 export function setAuthCookie(res: any, token: string) {
 	res.setHeader("Set-Cookie", [
-		`${authCookieName}=${token}; HttpOnly; Max-Age=${cookieMaxAge};`,
-		`${loginCookieName}=${true}; Max-Age=${cookieMaxAge};`,
+		`${authCookieName}=${token}; HttpOnly; Max-Age=${cookieMaxAge}; ${isProduction ? "Secure;" : ""}`,
+		`${loginCookieName}=${true}; Max-Age=${cookieMaxAge}; ${isProduction ? "Secure;" : ""}`,
 	])
 }
 
