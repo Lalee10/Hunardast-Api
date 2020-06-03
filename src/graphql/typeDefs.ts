@@ -58,13 +58,21 @@ const typeDefs = gql`
 
 	input StoreUpdateInput {
 		name: String
+		logo: String
 		banner: String
-		image: String
 		location: String
 		tagline: String
 	}
 
+	type S3Payload {
+		signedRequest: String!
+		url: String!
+	}
+
 	type Mutation {
+		# AWS S3
+		getSignedUrl(fileName: String!, fileType: String!): S3Payload!
+
 		# User
 		loginUser(password: String!, email: String!): User!
 		logoutUser: String!
