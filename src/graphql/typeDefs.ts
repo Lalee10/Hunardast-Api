@@ -2,6 +2,8 @@ import gql from "graphql-tag"
 
 const typeDefs = gql`
 	scalar Date
+	scalar JSON
+	scalar JSONObject
 
 	type User {
 		_id: ID!
@@ -39,6 +41,7 @@ const typeDefs = gql`
 	type Product {
 		_id: ID!
 		name: String!
+		images: [String]!
 		price: Float!
 		discount: Float!
 		category: String!
@@ -46,6 +49,8 @@ const typeDefs = gql`
 		sizes: [String]!
 		colors: [String]!
 		store: String!
+		renewalType: String
+		expiresAt: Date
 		createdAt: Date!
 		updatedAt: Date!
 	}
@@ -81,11 +86,19 @@ const typeDefs = gql`
 		# Store
 		createStore(data: StoreCreateInput!): Store!
 		updateStore(data: StoreUpdateInput!): Store
+
+		# Product
+		createProduct(data: JSONObject!): Product!
+		updateProduct(data: JSONObject!): Product!
 	}
 
 	type Query {
 		verifyUser(required: Boolean!): User
 		readMyStore: Store
+
+		# Product
+		getProductById(id: String!): Product
+		getMyProducts: [Product]!
 	}
 `
 
