@@ -10,6 +10,7 @@ const typeDefs = gql`
 		name: String!
 		email: String!
 		permissions: [String!]!
+		store: Store
 		createdAt: Date!
 		updatedAt: Date!
 	}
@@ -49,8 +50,8 @@ const typeDefs = gql`
 		sizes: [String!]!
 		colors: [String!]!
 		store: String!
-		renewalType: String
-		expiresAt: Date
+		renewalType: String!
+		expiresAt: Date!
 		createdAt: Date!
 		updatedAt: Date!
 	}
@@ -98,7 +99,7 @@ const typeDefs = gql`
 
 		# Product
 		getProductById(id: String!): Product
-		getMyProducts: [Product]!
+		getMyProducts: [Product!]!
 	}
 `
 

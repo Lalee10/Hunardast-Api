@@ -9,13 +9,13 @@ import { verifyAuthToken } from "../../src/controllers/auth"
 const apolloServer = new ApolloServer({
 	typeDefs: typeDefs,
 	resolvers: resolvers,
-	playground: process.env.NODE_ENV !== "production",
 	context: ({ req, res }): ApolloContext => {
 		const db = getDb()
 		const user = verifyAuthToken(req.headers.cookie || "")
 		console.log("Request: ", user?._id, req.headers["user-agent"]?.split(" ")[0], req.body?.operationName)
 		return { req, res, db, user }
 	},
+	playground: true,
 })
 
 const handler = apolloServer.createHandler({
@@ -28,16 +28,28 @@ export const config = {
 	},
 }
 
-function getHost(url: string | null | undefined) {
-	let host = (url || "").replace(/^((\w+:)?\/\/[^\/]+\/?).*$/, "$1")
-	if (host.endsWith("/")) host = host.substring(0, host.length - 1)
+function getHost(input: string | null | undefined) {
+	let host = (input || "").replace(/^((\w+:)?\/\/[^\/]+\/?).*$/, "$1")
+	if (host.endsWith("/")) {
+		host = host.substring(0, host.length - 1)
+	} else if (!host || host.length <= 2) {
+		host = "*"
+	}
 	return host
 }
 
 export default (req: NextApiRequest, res: NextApiResponse) => {
 	const origin = getHost(req.headers.referer)
+
+	// Allow Origins
 	res.setHeader("Access-Control-Allow-Origin", origin)
+	// Allow Methods
+	res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+	// Allow Headers
+	res.setHeader("Access-Control-Allow-Headers", "Origin, Accept, Content-Type, Authorization")
+	// Allow credentials
 	res.setHeader("Access-Control-Allow-Credentials", "true")
+
 	if (req.method === "OPTIONS") {
 		res.status(200).end()
 		return

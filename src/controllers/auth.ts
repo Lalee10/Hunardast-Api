@@ -31,11 +31,27 @@ export function getToken(user: any) {
 	return token
 }
 
-export function setAuthCookie(res: any, token: string) {
-	res.setHeader("Set-Cookie", [
-		`${authCookieName}=${token}; HttpOnly; Max-Age=${cookieMaxAge}; ${isProduction ? "Secure;" : ""}`,
-		`${loginCookieName}=${true}; Max-Age=${cookieMaxAge}; ${isProduction ? "Secure;" : ""}`,
-	])
+function getHost(input: string | null | undefined) {
+	let host = (input || "").replace(/^((\w+:)?\/\/[^\/]+\/?).*$/, "$1")
+	if (host.endsWith("/")) {
+		host = host.substring(0, host.length - 1)
+	} else if (!host || host.length <= 2) {
+		host = "*"
+	}
+	return host
+}
+
+export function setAuthCookie(req: any, res: any, token: string) {
+	const origin = getHost(req.headers.referer)
+	let authCookie = `${authCookieName}=${token}; HttpOnly; Max-Age=${cookieMaxAge};`
+
+	if (isProduction) authCookie += ` Secure;`
+
+	if (origin && origin.length > 1) authCookie += ` Domain=${origin};`
+
+	authCookie += " SameSite=None;"
+
+	res.setHeader("Set-Cookie", [`${authCookie}`])
 }
 
 export function clearAuthCookie(res: any) {

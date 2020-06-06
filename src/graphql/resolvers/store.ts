@@ -28,6 +28,8 @@ export const storeMutations: IMutationResolvers = {
 			manager: user._id,
 			...data,
 		})
+		// add store to user
+		await db.User.findByIdAndUpdate(user._id, { store: created._id })
 
 		return created
 	},

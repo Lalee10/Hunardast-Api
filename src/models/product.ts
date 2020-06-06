@@ -1,6 +1,11 @@
+import moment from "moment"
 import { Schema, Document } from "mongoose"
 import { Timestamp } from "./interface"
 import { IStoreDb } from "./store"
+
+function getDefaultRenewalDuration() {
+	return moment().add(3, "months").toDate()
+}
 
 export interface IProductDb extends Document, Timestamp {
 	name: string
@@ -30,7 +35,7 @@ const productSchema: Schema = new Schema(
 		colors: { type: [String], default: [] },
 		store: { type: ObjectId, ref: "Store", required: true },
 		renewalType: { type: String, default: "manual" },
-		expiresAt: { type: Date },
+		expiresAt: { type: Date, default: getDefaultRenewalDuration },
 	},
 	{ timestamps: true }
 )

@@ -73,16 +73,16 @@ export type IProduct = {
 	__typename?: "Product"
 	_id: Scalars["ID"]
 	name: Scalars["String"]
-	images: Array<Maybe<Scalars["String"]>>
+	images: Array<Scalars["String"]>
 	price: Scalars["Float"]
 	discount: Scalars["Float"]
 	category: Scalars["String"]
 	description: Scalars["String"]
-	sizes: Array<Maybe<Scalars["String"]>>
-	colors: Array<Maybe<Scalars["String"]>>
+	sizes: Array<Scalars["String"]>
+	colors: Array<Scalars["String"]>
 	store: Scalars["String"]
-	renewalType?: Maybe<Scalars["String"]>
-	expiresAt?: Maybe<Scalars["Date"]>
+	renewalType: Scalars["String"]
+	expiresAt: Scalars["Date"]
 	createdAt: Scalars["Date"]
 	updatedAt: Scalars["Date"]
 }
@@ -92,7 +92,7 @@ export type IQuery = {
 	verifyUser?: Maybe<IUser>
 	readMyStore?: Maybe<IStore>
 	getProductById?: Maybe<IProduct>
-	getMyProducts: Array<Maybe<IProduct>>
+	getMyProducts: Array<IProduct>
 }
 
 export type IQueryVerifyUserArgs = {
@@ -154,7 +154,8 @@ export type IUser = {
 	_id: Scalars["ID"]
 	name: Scalars["String"]
 	email: Scalars["String"]
-	permissions: Array<Maybe<Scalars["String"]>>
+	permissions: Array<Scalars["String"]>
+	store?: Maybe<IStore>
 	createdAt: Scalars["Date"]
 	updatedAt: Scalars["Date"]
 }
@@ -237,8 +238,8 @@ export type IResolversTypes = ResolversObject<{
 	User: ResolverTypeWrapper<IUser>
 	ID: ResolverTypeWrapper<Scalars["ID"]>
 	String: ResolverTypeWrapper<Scalars["String"]>
-	Date: ResolverTypeWrapper<Scalars["Date"]>
 	Store: ResolverTypeWrapper<IStore>
+	Date: ResolverTypeWrapper<Scalars["Date"]>
 	Product: ResolverTypeWrapper<IProduct>
 	Float: ResolverTypeWrapper<Scalars["Float"]>
 	Mutation: ResolverTypeWrapper<{}>
@@ -260,8 +261,8 @@ export type IResolversParentTypes = ResolversObject<{
 	User: IUser
 	ID: Scalars["ID"]
 	String: Scalars["String"]
-	Date: Scalars["Date"]
 	Store: IStore
+	Date: Scalars["Date"]
 	Product: IProduct
 	Float: Scalars["Float"]
 	Mutation: {}
@@ -343,16 +344,16 @@ export type IProductResolvers<
 > = ResolversObject<{
 	_id?: Resolver<IResolversTypes["ID"], ParentType, ContextType>
 	name?: Resolver<IResolversTypes["String"], ParentType, ContextType>
-	images?: Resolver<Array<Maybe<IResolversTypes["String"]>>, ParentType, ContextType>
+	images?: Resolver<Array<IResolversTypes["String"]>, ParentType, ContextType>
 	price?: Resolver<IResolversTypes["Float"], ParentType, ContextType>
 	discount?: Resolver<IResolversTypes["Float"], ParentType, ContextType>
 	category?: Resolver<IResolversTypes["String"], ParentType, ContextType>
 	description?: Resolver<IResolversTypes["String"], ParentType, ContextType>
-	sizes?: Resolver<Array<Maybe<IResolversTypes["String"]>>, ParentType, ContextType>
-	colors?: Resolver<Array<Maybe<IResolversTypes["String"]>>, ParentType, ContextType>
+	sizes?: Resolver<Array<IResolversTypes["String"]>, ParentType, ContextType>
+	colors?: Resolver<Array<IResolversTypes["String"]>, ParentType, ContextType>
 	store?: Resolver<IResolversTypes["String"], ParentType, ContextType>
-	renewalType?: Resolver<Maybe<IResolversTypes["String"]>, ParentType, ContextType>
-	expiresAt?: Resolver<Maybe<IResolversTypes["Date"]>, ParentType, ContextType>
+	renewalType?: Resolver<IResolversTypes["String"], ParentType, ContextType>
+	expiresAt?: Resolver<IResolversTypes["Date"], ParentType, ContextType>
 	createdAt?: Resolver<IResolversTypes["Date"], ParentType, ContextType>
 	updatedAt?: Resolver<IResolversTypes["Date"], ParentType, ContextType>
 	__isTypeOf?: isTypeOfResolverFn<ParentType>
@@ -375,7 +376,7 @@ export type IQueryResolvers<
 		ContextType,
 		RequireFields<IQueryGetProductByIdArgs, "id">
 	>
-	getMyProducts?: Resolver<Array<Maybe<IResolversTypes["Product"]>>, ParentType, ContextType>
+	getMyProducts?: Resolver<Array<IResolversTypes["Product"]>, ParentType, ContextType>
 }>
 
 export type IReviewResolvers<
@@ -430,7 +431,8 @@ export type IUserResolvers<
 	_id?: Resolver<IResolversTypes["ID"], ParentType, ContextType>
 	name?: Resolver<IResolversTypes["String"], ParentType, ContextType>
 	email?: Resolver<IResolversTypes["String"], ParentType, ContextType>
-	permissions?: Resolver<Array<Maybe<IResolversTypes["String"]>>, ParentType, ContextType>
+	permissions?: Resolver<Array<IResolversTypes["String"]>, ParentType, ContextType>
+	store?: Resolver<Maybe<IResolversTypes["Store"]>, ParentType, ContextType>
 	createdAt?: Resolver<IResolversTypes["Date"], ParentType, ContextType>
 	updatedAt?: Resolver<IResolversTypes["Date"], ParentType, ContextType>
 	__isTypeOf?: isTypeOfResolverFn<ParentType>
