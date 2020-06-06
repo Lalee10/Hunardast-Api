@@ -9,7 +9,7 @@ const typeDefs = gql`
 		_id: ID!
 		name: String!
 		email: String!
-		permissions: [String]!
+		permissions: [String!]!
 		createdAt: Date!
 		updatedAt: Date!
 	}
@@ -41,13 +41,13 @@ const typeDefs = gql`
 	type Product {
 		_id: ID!
 		name: String!
-		images: [String]!
+		images: [String!]!
 		price: Float!
 		discount: Float!
 		category: String!
 		description: String!
-		sizes: [String]!
-		colors: [String]!
+		sizes: [String!]!
+		colors: [String!]!
 		store: String!
 		renewalType: String
 		expiresAt: Date

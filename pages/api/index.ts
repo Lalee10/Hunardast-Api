@@ -1,5 +1,5 @@
 import { ApolloServer } from "apollo-server-micro"
-import microCors from "micro-cors"
+import { NextApiRequest, NextApiResponse } from "next"
 import typeDefs from "../../src/graphql/typeDefs"
 import resolvers from "../../src/graphql/resolvers"
 import { getDb } from "../../src/models"
@@ -28,14 +28,19 @@ export const config = {
 	},
 }
 
-const cors = microCors({
-	origin: "http://localhost:3000",
-})
+function getHost(url: string | null | undefined) {
+	let host = (url || "").replace(/^((\w+:)?\/\/[^\/]+\/?).*$/, "$1")
+	if (host.endsWith("/")) host = host.substring(0, host.length - 1)
+	return host
+}
 
-export default cors((req, res) => {
+export default (req: NextApiRequest, res: NextApiResponse) => {
+	const origin = getHost(req.headers.referer)
+	res.setHeader("Access-Control-Allow-Origin", origin)
+	res.setHeader("Access-Control-Allow-Credentials", "true")
 	if (req.method === "OPTIONS") {
-		res.end()
+		res.status(200).end()
 		return
 	}
 	return handler(req, res)
-})
+}
