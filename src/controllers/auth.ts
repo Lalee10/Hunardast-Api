@@ -40,6 +40,9 @@ function getBaseUrl(origin: string) {
 		.replace("http://", "")
 		.replace("https://", "")
 		.split(":")[0]
+		.split(".")
+		.splice(-2)
+		.join(".")
 	console.log("Base origin: ", base)
 	return base
 }
