@@ -1,6 +1,3 @@
 {
-	"version": 2,
-	"env": {
-		"MONGODB_URI": "mongodb+srv://hunardast:Lalee1402.@hunardast-twqgc.azure.mongodb.net/hunardast?retryWrites=true&w=majority"
-	}
+	"version": 2
 }
