@@ -1,6 +1,7 @@
 import { ApolloError } from "apollo-server-micro"
 import { IMutationResolvers, IQueryResolvers } from "../../typings/types"
 import { ApolloContext } from "../../models/interface"
+import { s3DeleteObjects } from "../../components/s3"
 
 async function getUserStore(ctx: ApolloContext) {
 	const store = await ctx.db.Store.findOne({ manager: ctx.user._id })
@@ -27,10 +28,18 @@ export const productMutations: IMutationResolvers = {
 	},
 	updateProduct: async function (root, args, ctx) {
 		await getUserStore(ctx)
-
 		const updatedProduct = args.data
-		return await ctx.db.Product.findByIdAndUpdate(updatedProduct._id, updatedProduct, {
+		if (args.data.images) {
+			const product = await ctx.db.Product.findById(args.id)
+			const oldImages = product.images
+			const newImages = args.data.images
+			const imagesToDelete = oldImages.filter((e) => !newImages.includes(e))
+			s3DeleteObjects(imagesToDelete)
+		}
+
+		const updated = await ctx.db.Product.findByIdAndUpdate(args.id, updatedProduct, {
 			new: true,
 		})
+		return updated
 	},
 }

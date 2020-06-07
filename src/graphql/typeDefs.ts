@@ -90,11 +90,11 @@ const typeDefs = gql`
 
 		# Product
 		createProduct(data: JSONObject!): Product!
-		updateProduct(data: JSONObject!): Product!
+		updateProduct(id: ID!, data: JSONObject!): Product!
 	}
 
 	type Query {
-		verifyUser(required: Boolean!): User
+		verifyUser(required: Boolean): User
 		readMyStore: Store
 
 		# Product

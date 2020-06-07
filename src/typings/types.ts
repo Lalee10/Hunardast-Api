@@ -66,6 +66,7 @@ export type IMutationCreateProductArgs = {
 }
 
 export type IMutationUpdateProductArgs = {
+	id: Scalars["ID"]
 	data: Scalars["JSONObject"]
 }
 
@@ -96,7 +97,7 @@ export type IQuery = {
 }
 
 export type IQueryVerifyUserArgs = {
-	required: Scalars["Boolean"]
+	required?: Maybe<Scalars["Boolean"]>
 }
 
 export type IQueryGetProductByIdArgs = {
@@ -334,7 +335,7 @@ export type IMutationResolvers<
 		IResolversTypes["Product"],
 		ParentType,
 		ContextType,
-		RequireFields<IMutationUpdateProductArgs, "data">
+		RequireFields<IMutationUpdateProductArgs, "id" | "data">
 	>
 }>
 
@@ -363,12 +364,7 @@ export type IQueryResolvers<
 	ContextType = ApolloContext,
 	ParentType extends IResolversParentTypes["Query"] = IResolversParentTypes["Query"]
 > = ResolversObject<{
-	verifyUser?: Resolver<
-		Maybe<IResolversTypes["User"]>,
-		ParentType,
-		ContextType,
-		RequireFields<IQueryVerifyUserArgs, "required">
-	>
+	verifyUser?: Resolver<Maybe<IResolversTypes["User"]>, ParentType, ContextType, IQueryVerifyUserArgs>
 	readMyStore?: Resolver<Maybe<IResolversTypes["Store"]>, ParentType, ContextType>
 	getProductById?: Resolver<
 		Maybe<IResolversTypes["Product"]>,
