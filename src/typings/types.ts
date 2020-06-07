@@ -84,6 +84,7 @@ export type IProduct = {
 	store: Scalars["String"]
 	renewalType: Scalars["String"]
 	expiresAt: Scalars["Date"]
+	inStock: Scalars["Int"]
 	createdAt: Scalars["Date"]
 	updatedAt: Scalars["Date"]
 }
@@ -243,6 +244,7 @@ export type IResolversTypes = ResolversObject<{
 	Date: ResolverTypeWrapper<Scalars["Date"]>
 	Product: ResolverTypeWrapper<IProduct>
 	Float: ResolverTypeWrapper<Scalars["Float"]>
+	Int: ResolverTypeWrapper<Scalars["Int"]>
 	Mutation: ResolverTypeWrapper<{}>
 	S3Payload: ResolverTypeWrapper<IS3Payload>
 	StoreCreateInput: IStoreCreateInput
@@ -250,7 +252,6 @@ export type IResolversTypes = ResolversObject<{
 	JSONObject: ResolverTypeWrapper<Scalars["JSONObject"]>
 	JSON: ResolverTypeWrapper<Scalars["JSON"]>
 	Review: ResolverTypeWrapper<IReview>
-	Int: ResolverTypeWrapper<Scalars["Int"]>
 	CacheControlScope: ICacheControlScope
 	Upload: ResolverTypeWrapper<Scalars["Upload"]>
 }>
@@ -266,6 +267,7 @@ export type IResolversParentTypes = ResolversObject<{
 	Date: Scalars["Date"]
 	Product: IProduct
 	Float: Scalars["Float"]
+	Int: Scalars["Int"]
 	Mutation: {}
 	S3Payload: IS3Payload
 	StoreCreateInput: IStoreCreateInput
@@ -273,7 +275,6 @@ export type IResolversParentTypes = ResolversObject<{
 	JSONObject: Scalars["JSONObject"]
 	JSON: Scalars["JSON"]
 	Review: IReview
-	Int: Scalars["Int"]
 	CacheControlScope: ICacheControlScope
 	Upload: Scalars["Upload"]
 }>
@@ -355,6 +356,7 @@ export type IProductResolvers<
 	store?: Resolver<IResolversTypes["String"], ParentType, ContextType>
 	renewalType?: Resolver<IResolversTypes["String"], ParentType, ContextType>
 	expiresAt?: Resolver<IResolversTypes["Date"], ParentType, ContextType>
+	inStock?: Resolver<IResolversTypes["Int"], ParentType, ContextType>
 	createdAt?: Resolver<IResolversTypes["Date"], ParentType, ContextType>
 	updatedAt?: Resolver<IResolversTypes["Date"], ParentType, ContextType>
 	__isTypeOf?: isTypeOfResolverFn<ParentType>

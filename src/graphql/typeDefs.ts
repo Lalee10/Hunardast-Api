@@ -52,6 +52,7 @@ const typeDefs = gql`
 		store: String!
 		renewalType: String!
 		expiresAt: Date!
+		inStock: Int!
 		createdAt: Date!
 		updatedAt: Date!
 	}

@@ -19,6 +19,7 @@ export interface IProductDb extends Document, Timestamp {
 	store: IStoreDb["_id"]
 	renewalType: string
 	expiresAt: Date
+	inStock: number
 }
 
 const { ObjectId } = Schema.Types
@@ -36,6 +37,7 @@ const productSchema: Schema = new Schema(
 		store: { type: ObjectId, ref: "Store", required: true },
 		renewalType: { type: String, default: "manual" },
 		expiresAt: { type: Date, default: getDefaultRenewalDuration },
+		inStock: { type: Number, default: 0, required: true },
 	},
 	{ timestamps: true }
 )
