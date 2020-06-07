@@ -1,7 +1,7 @@
 import bcrypt from "bcryptjs"
 import { ApolloError } from "apollo-server-micro"
 import { validateEmail, getToken, setAuthCookie, clearAuthCookie } from "../../controllers/auth"
-import { IMutationResolvers, IQueryResolvers, IUser } from "../../typings/types"
+import { IMutationResolvers, IQueryResolvers } from "../../typings/types"
 import { UnauthorizedError } from "../../helpers/error"
 
 export const authQueries: IQueryResolvers = {
@@ -28,12 +28,13 @@ export const authMutations: IMutationResolvers = {
 		const encryptedPass = await bcrypt.hash(password, 10)
 		const created = await db.User.create({ name, email, password: encryptedPass })
 
-		// Get the JWT for the created user and instruct response to set cookie
-		const token = getToken(created)
-		setAuthCookie(ctx.req, res, token)
-
 		const user = await ctx.db.User.findById(created._id).lean()
 		const store = await ctx.db.Store.findById(user.store).lean()
+
+		// Get the JWT for the created user and instruct response to set cookie
+		const token = getToken({ ...user, store })
+		setAuthCookie(ctx.req, res, token)
+
 		return { ...user, store }
 	},
 	loginUser: async (root, args, ctx) => {
@@ -48,11 +49,12 @@ export const authMutations: IMutationResolvers = {
 		const match = await bcrypt.compare(password, encryptedPass)
 		if (!match) throw new ApolloError("Authentication Failed!", "AUTH_FAILED")
 
-		// Get the JWT for the user and instruct response to set cookie
-		const token = getToken(user)
+		const store = await ctx.db.Store.findById(user.store).lean()
+
+		// Get the JWT for the created user and instruct response to set cookie
+		const token = getToken({ ...user, store })
 		setAuthCookie(ctx.req, res, token)
 
-		const store = await ctx.db.Store.findById(user.store).lean()
 		return { ...user, store }
 	},
 	logoutUser: (root, args, ctx) => {

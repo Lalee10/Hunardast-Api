@@ -4,6 +4,7 @@ import { IUserDb } from "./user"
 import { IStoreDb } from "./store"
 import { IProductDb } from "./product"
 import { IReviewDb } from "./review"
+import { IUser } from "../typings/types"
 
 export interface Timestamp {
 	createdAt: Date
@@ -17,19 +18,13 @@ export interface CoreDatabase {
 	Review: Model<IReviewDb & Document>
 }
 
-export interface DecodedUser {
-	_id: string
-	name: string
-	email: string
-}
-
 export type Nullable<T> = T | null
 
 export interface ApolloContext {
 	req: Request
 	res: Response
 	db: CoreDatabase
-	user: Nullable<DecodedUser>
+	user: Nullable<IUser>
 }
 
 export type ObjectId = Schema.Types.ObjectId

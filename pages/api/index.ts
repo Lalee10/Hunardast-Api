@@ -11,11 +11,13 @@ const apolloServer = new ApolloServer({
 	resolvers: resolvers,
 	context: ({ req, res }): ApolloContext => {
 		const db = getDb()
-		const user = verifyAuthToken(req.headers.cookie || "")
-		console.log("Request: ", user?._id, req.headers["user-agent"]?.split(" ")[0], req.body?.operationName)
+		const user = verifyAuthToken(req.headers.cookie || "") as ApolloContext["user"]
+		console.log(process.env.MONGODB_URI)
+		console.log("Request: ", user?._id, req.headers["user-agent"]?.split(" ")[0], req.headers.referer)
 		return { req, res, db, user }
 	},
 	playground: true,
+	introspection: true,
 })
 
 const handler = apolloServer.createHandler({
@@ -40,7 +42,7 @@ function getHost(input: string | null | undefined) {
 
 export default (req: NextApiRequest, res: NextApiResponse) => {
 	const origin = getHost(req.headers.referer)
-
+	console.log("Origin: ", origin)
 	// Allow Origins
 	res.setHeader("Access-Control-Allow-Origin", origin)
 	// Allow Methods

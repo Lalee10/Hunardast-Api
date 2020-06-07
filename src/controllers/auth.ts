@@ -1,10 +1,11 @@
+import cookie from "cookie"
 import jwt from "jsonwebtoken"
 import { ApolloError } from "apollo-server-micro"
 import { CoreDatabase } from "../models/interface"
+import { IUser } from "../typings/types"
 
 const secretKey = `${process.env.SECRET_KEY}`
 const authCookieName = "authTokenHD"
-const loginCookieName = "loggedInHD"
 const cookieMaxAge = 1000 * 60 * 60 * 24 * 2
 const isProduction = process.env.NODE_ENV === "production"
 
@@ -23,57 +24,43 @@ export async function validateEmail(db: CoreDatabase, email: string) {
 	}
 }
 
-export function getToken(user: any) {
-	const token = jwt.sign({ _id: user._id, name: user.name, email: user.email }, secretKey, {
+export function getToken(user: IUser) {
+	const token = jwt.sign({ ...user }, secretKey, {
 		audience: "https://api.hunardast.com",
 		expiresIn: "2 days",
 	})
 	return token
 }
 
-function getHost(input: string | null | undefined) {
-	let host = (input || "").replace(/^((\w+:)?\/\/[^\/]+\/?).*$/, "$1")
-	if (host.endsWith("/")) {
-		host = host.substring(0, host.length - 1)
-	} else if (!host || host.length <= 2) {
-		host = "*"
-	}
-	return host
-}
-
 export function setAuthCookie(req: any, res: any, token: string) {
-	const origin = getHost(req.headers.referer)
-	let authCookie = `${authCookieName}=${token}; HttpOnly; Max-Age=${cookieMaxAge};`
-
-	if (isProduction) authCookie += ` Secure;`
-
-	if (origin && origin.length > 1) authCookie += ` Domain=${origin};`
-
-	authCookie += " SameSite=None;"
-
-	res.setHeader("Set-Cookie", [`${authCookie}`])
+	const authCookie = cookie.serialize(authCookieName, token, {
+		domain: isProduction ? "hunardast-app.now.sh" : "localhost",
+		maxAge: cookieMaxAge,
+		httpOnly: true,
+		sameSite: "none",
+		secure: isProduction,
+	})
+	res.setHeader("Set-Cookie", [authCookie])
 }
 
 export function clearAuthCookie(res: any) {
-	res.setHeader("Set-Cookie", [`${authCookieName}=; Max-Age=${0};`, `${loginCookieName}=; Max-Age=${0};`])
-}
-
-export function getCookie(cookies: string, name: string) {
-	const arr = cookies.split(";").filter((e) => e.includes(name))
-	if (arr.length === 0) return ""
-	else return arr[0].split("=")[1].trim()
+	const authCookie = cookie.serialize(authCookieName, "", {
+		domain: isProduction ? "hunardast-app.now.sh" : "localhost",
+		maxAge: 0,
+		httpOnly: true,
+		sameSite: "none",
+		secure: isProduction,
+	})
+	res.setHeader("Set-Cookie", [authCookie])
 }
 
 export function verifyAuthToken(cookies: string) {
 	try {
-		const authToken = getCookie(cookies, "authToken")
+		const cookiesExtracted = cookie.parse(cookies)
+		const authToken = cookiesExtracted[authCookieName]
 		const decoded = jwt.verify(authToken, secretKey)
 		if (typeof decoded === "object") {
-			return {
-				_id: decoded["_id"],
-				name: decoded["name"],
-				email: decoded["email"],
-			}
+			return decoded
 		} else {
 			return null
 		}
