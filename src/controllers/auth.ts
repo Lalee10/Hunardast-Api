@@ -4,7 +4,7 @@ import { ApolloError } from "apollo-server-micro"
 import { CoreDatabase } from "../models/interface"
 import { IUser } from "../typings/types"
 
-const secretKey = `${process.env.SECRET_KEY}`
+const secretKey = `${process.env.HD_SECRET_KEY}`
 const authCookieName = "authTokenHD"
 const cookieMaxAge = 1000 * 60 * 60 * 24 * 2
 const isProduction = process.env.NODE_ENV === "production"
@@ -20,7 +20,10 @@ export async function validateEmail(db: CoreDatabase, email: string) {
 	const emailExists = await db.User.exists({ email })
 
 	if (emailExists) {
-		throw new ApolloError("A user with email already exists", "DUPLICATE_EMAIL_ERR")
+		throw new ApolloError(
+			"A user with email already exists",
+			"DUPLICATE_EMAIL_ERR"
+		)
 	}
 }
 

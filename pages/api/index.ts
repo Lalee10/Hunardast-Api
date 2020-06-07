@@ -11,9 +11,16 @@ const apolloServer = new ApolloServer({
 	resolvers: resolvers,
 	context: ({ req, res }): ApolloContext => {
 		const db = getDb()
-		const user = verifyAuthToken(req.headers.cookie || "") as ApolloContext["user"]
-		console.log(process.env.MONGODB_URI)
-		console.log("Request: ", user?._id, req.headers["user-agent"]?.split(" ")[0], req.headers.referer)
+		const user = verifyAuthToken(
+			req.headers.cookie || ""
+		) as ApolloContext["user"]
+		console.log(process.env.HD_MONGO_URI)
+		console.log(
+			"Request: ",
+			user?._id,
+			req.headers["user-agent"]?.split(" ")[0],
+			req.headers.referer
+		)
 		return { req, res, db, user }
 	},
 	playground: true,
@@ -48,7 +55,10 @@ export default (req: NextApiRequest, res: NextApiResponse) => {
 	// Allow Methods
 	res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
 	// Allow Headers
-	res.setHeader("Access-Control-Allow-Headers", "Origin, Accept, Content-Type, Authorization")
+	res.setHeader(
+		"Access-Control-Allow-Headers",
+		"Origin, Accept, Content-Type, Authorization"
+	)
 	// Allow credentials
 	res.setHeader("Access-Control-Allow-Credentials", "true")
 

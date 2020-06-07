@@ -5,7 +5,7 @@ import productSchema from "./product"
 import reviewSchema from "./review"
 import storeSchema from "./store"
 
-const DB_STRING = `${process.env.MONGODB_URI}`
+const DB_STRING = `${process.env.HD_MONGO_URI}`
 
 const connectionOpts = {
 	useNewUrlParser: true,
@@ -21,7 +21,10 @@ export const getDb = (dbName = "hunardast"): CoreDatabase => {
 	if (databases[dbName]) {
 		return databases[dbName]
 	} else {
-		const conn = mongoose.createConnection(DB_STRING, { ...connectionOpts, dbName })
+		const conn = mongoose.createConnection(DB_STRING, {
+			...connectionOpts,
+			dbName,
+		})
 		const db: CoreDatabase = {
 			Product: conn.model("Product", productSchema),
 			Review: conn.model("Review", reviewSchema),
