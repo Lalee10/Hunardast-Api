@@ -13,3 +13,5 @@ schema.gql
 now.json
 .now
 .vercel
+.next
+yarn.lock

@@ -1,18 +1,16 @@
 overwrite: true
-schema: "./src/graphql/schema.ts"
-require:
-   - ts-node/register
-documents: null
+schema: "http://localhost:4000/api"
 config:
    useIndexSignature: true
-   typesPrefix: IGen
+   contextType: ../models/interface#ApolloContext
+   typesPrefix: I
    scalars:
       Date: Date
 generates:
    src/typings/types.ts:
       plugins:
          - "typescript"
-
+         - "typescript-resolvers"
 hooks:
    afterAllFileWrite:
       - prettier --write
