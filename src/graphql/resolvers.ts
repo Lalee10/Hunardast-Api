@@ -11,7 +11,10 @@ const resolvers: IResolvers = {
 	Date: new GraphQLScalarType({
 		name: "Date",
 		description: "A date and time, represented as an ISO-8601 string",
-		serialize: (value) => value.toISOString(),
+		serialize: (value) => {
+			if (typeof value === "string") value = new Date(value)
+			return value.toISOString()
+		},
 		parseValue: (value) => new Date(value),
 		parseLiteral: (ast) => {
 			if (ast.kind === Kind.INT) {

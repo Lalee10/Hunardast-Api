@@ -6,7 +6,7 @@ import { IUser } from "../typings/types"
 
 const secretKey = `${process.env.HD_SECRET_KEY}`
 const authCookieName = "authTokenHD"
-const cookieMaxAge = 1000 * 60 * 60 * 24 * 2
+const cookieMaxAge = 60 * 60 * 24 * 2
 const isProduction = process.env.NODE_ENV === "production"
 
 export async function validateEmail(db: CoreDatabase, email: string) {
@@ -28,31 +28,43 @@ export async function validateEmail(db: CoreDatabase, email: string) {
 }
 
 export function getToken(user: IUser) {
-	const token = jwt.sign({ ...user }, secretKey, {
+	const token = jwt.sign(user, secretKey, {
 		audience: "https://api.hunardast.com",
 		expiresIn: "2 days",
 	})
 	return token
 }
 
+function getBaseUrl(origin: string) {
+	const base = origin
+		.replace("http://", "")
+		.replace("https://", "")
+		.split(":")[0]
+	console.log("Base origin: ", base)
+	return base
+}
+
 export function setAuthCookie(req: any, res: any, token: string) {
+	const domain = getBaseUrl(req.headers.origin)
 	const authCookie = cookie.serialize(authCookieName, token, {
-		domain: isProduction ? "hunardast-app.now.sh" : "localhost",
+		domain: domain,
 		maxAge: cookieMaxAge,
 		httpOnly: true,
 		sameSite: "none",
-		secure: isProduction,
+		secure: isProduction && domain !== "localhost",
 	})
+	console.log("Auth cookie", authCookie)
 	res.setHeader("Set-Cookie", [authCookie])
 }
 
-export function clearAuthCookie(res: any) {
+export function clearAuthCookie(req: any, res: any) {
+	const domain = getBaseUrl(req.headers.origin)
 	const authCookie = cookie.serialize(authCookieName, "", {
-		domain: isProduction ? "hunardast-app.now.sh" : "localhost",
+		domain: domain,
 		maxAge: 0,
 		httpOnly: true,
 		sameSite: "none",
-		secure: isProduction,
+		secure: isProduction && domain !== "localhost",
 	})
 	res.setHeader("Set-Cookie", [authCookie])
 }

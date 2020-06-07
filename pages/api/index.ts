@@ -37,19 +37,10 @@ export const config = {
 	},
 }
 
-function getHost(input: string | null | undefined) {
-	let host = (input || "").replace(/^((\w+:)?\/\/[^\/]+\/?).*$/, "$1")
-	if (host.endsWith("/")) {
-		host = host.substring(0, host.length - 1)
-	} else if (!host || host.length <= 2) {
-		host = "*"
-	}
-	return host
-}
-
 export default (req: NextApiRequest, res: NextApiResponse) => {
-	const origin = getHost(req.headers.referer)
-	console.log("Origin: ", origin)
+	const origin = req.headers.origin ? `${req.headers.origin}` : "*"
+	console.log(origin)
+	// console.log("Origin: ", origin)
 	// Allow Origins
 	res.setHeader("Access-Control-Allow-Origin", origin)
 	// Allow Methods

@@ -1,11 +1,17 @@
 import { ApolloError } from "apollo-server-micro"
-import { IMutationResolvers, IQueryResolvers } from "../../typings/types"
+import {
+	IMutationResolvers,
+	IQueryResolvers,
+	IProduct,
+} from "../../typings/types"
 import { ApolloContext } from "../../models/interface"
 import { s3DeleteObjects } from "../../components/s3"
 
 async function getUserStore(ctx: ApolloContext) {
+	if (!ctx.user) throw new ApolloError("User does not exist", "NOT_FOUND")
+
 	const store = await ctx.db.Store.findOne({ manager: ctx.user._id })
-	if (!store) throw new ApolloError("User does not have a store", "NO_STORE")
+	if (!store) throw new ApolloError("User does not have a store", "NOT_FOUND")
 	else return store
 }
 
@@ -29,17 +35,22 @@ export const productMutations: IMutationResolvers = {
 	updateProduct: async function (root, args, ctx) {
 		await getUserStore(ctx)
 		const updatedProduct = args.data
+		const product = await ctx.db.Product.findById(args.id)
+
+		if (!product) throw new ApolloError("No product found", "NOT_FOUND")
+
 		if (args.data.images) {
-			const product = await ctx.db.Product.findById(args.id)
 			const oldImages = product.images
 			const newImages = args.data.images
 			const imagesToDelete = oldImages.filter((e) => !newImages.includes(e))
-			s3DeleteObjects(imagesToDelete)
+			if (imagesToDelete.length > 0) s3DeleteObjects(imagesToDelete)
 		}
 
-		const updated = await ctx.db.Product.findByIdAndUpdate(args.id, updatedProduct, {
-			new: true,
-		})
-		return updated
+		const updated = await ctx.db.Product.findByIdAndUpdate(
+			product._id,
+			updatedProduct,
+			{ new: true }
+		)
+		return updated as IProduct
 	},
 }

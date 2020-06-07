@@ -1,8 +1,36 @@
 import bcrypt from "bcryptjs"
 import { ApolloError } from "apollo-server-micro"
-import { validateEmail, getToken, setAuthCookie, clearAuthCookie } from "../../controllers/auth"
-import { IMutationResolvers, IQueryResolvers } from "../../typings/types"
+import {
+	validateEmail,
+	getToken,
+	setAuthCookie,
+	clearAuthCookie,
+} from "../../controllers/auth"
+import {
+	IMutationResolvers,
+	IQueryResolvers,
+	IUser,
+	IStore,
+} from "../../typings/types"
 import { UnauthorizedError } from "../../helpers/error"
+import { IUserDb } from "../../models/user"
+import { IStoreDb } from "../../models/store"
+
+function authResponseUser(
+	user: IUser | IUserDb,
+	store: IStore | IStoreDb | null
+): IUser {
+	return {
+		__typename: "User",
+		_id: user._id,
+		email: user.email,
+		name: user.name,
+		permissions: user.permissions,
+		store: store,
+		createdAt: user.createdAt,
+		updatedAt: user.updatedAt,
+	}
+}
 
 export const authQueries: IQueryResolvers = {
 	verifyUser: async (root, args, ctx) => {
@@ -11,9 +39,7 @@ export const authQueries: IQueryResolvers = {
 		} else if (!ctx.user) {
 			return null
 		} else {
-			const user = await ctx.db.User.findById(ctx.user._id).lean()
-			const store = await ctx.db.Store.findById(user.store).lean()
-			return { ...user, store }
+			return ctx.user
 		}
 	},
 }
@@ -26,22 +52,26 @@ export const authMutations: IMutationResolvers = {
 		await validateEmail(db, email)
 
 		const encryptedPass = await bcrypt.hash(password, 10)
-		const created = await db.User.create({ name, email, password: encryptedPass })
+		const created = await db.User.create({
+			name,
+			email,
+			password: encryptedPass,
+		})
 
-		const user = await ctx.db.User.findById(created._id).lean()
-		const store = await ctx.db.Store.findById(user.store).lean()
+		const store = await ctx.db.Store.findById(created.store).lean()
+		const authUser = authResponseUser(created, store)
 
 		// Get the JWT for the created user and instruct response to set cookie
-		const token = getToken({ ...user, store })
+		const token = getToken(authUser)
 		setAuthCookie(ctx.req, res, token)
 
-		return { ...user, store }
+		return authUser
 	},
 	loginUser: async (root, args, ctx) => {
 		const { email, password } = args
-		const { db, res } = ctx
+		const { db, req, res } = ctx
 		// Check if email is valid
-		const user = await db.User.findOne({ email }).lean()
+		const user = await db.User.findOne({ email })
 		if (!user) throw new ApolloError("Authentication Failed!", "AUTH_FAILED")
 
 		// Check if password is valid
@@ -50,16 +80,17 @@ export const authMutations: IMutationResolvers = {
 		if (!match) throw new ApolloError("Authentication Failed!", "AUTH_FAILED")
 
 		const store = await ctx.db.Store.findById(user.store).lean()
+		const authUser = authResponseUser(user, store)
 
 		// Get the JWT for the created user and instruct response to set cookie
-		const token = getToken({ ...user, store })
-		setAuthCookie(ctx.req, res, token)
+		const token = getToken(authUser)
+		setAuthCookie(req, res, token)
 
-		return { ...user, store }
+		return authUser
 	},
 	logoutUser: (root, args, ctx) => {
-		const { res } = ctx
-		clearAuthCookie(res)
+		const { req, res } = ctx
+		clearAuthCookie(req, res)
 		return "User logged out successfully"
 	},
 }

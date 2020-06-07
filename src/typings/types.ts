@@ -1,7 +1,13 @@
-import { GraphQLResolveInfo, GraphQLScalarType, GraphQLScalarTypeConfig } from "graphql"
+import {
+	GraphQLResolveInfo,
+	GraphQLScalarType,
+	GraphQLScalarTypeConfig,
+} from "graphql"
 import { ApolloContext } from "../models/interface"
 export type Maybe<T> = T | null
-export type RequireFields<T, K extends keyof T> = { [X in Exclude<keyof T, K>]?: T[X] } &
+export type RequireFields<T, K extends keyof T> = {
+	[X in Exclude<keyof T, K>]?: T[X]
+} &
 	{ [P in K]-?: NonNullable<T[P]> }
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
@@ -197,9 +203,25 @@ export type SubscriptionResolveFn<TResult, TParent, TContext, TArgs> = (
 	info: GraphQLResolveInfo
 ) => TResult | Promise<TResult>
 
-export interface SubscriptionSubscriberObject<TResult, TKey extends string, TParent, TContext, TArgs> {
-	subscribe: SubscriptionSubscribeFn<{ [key in TKey]: TResult }, TParent, TContext, TArgs>
-	resolve?: SubscriptionResolveFn<TResult, { [key in TKey]: TResult }, TContext, TArgs>
+export interface SubscriptionSubscriberObject<
+	TResult,
+	TKey extends string,
+	TParent,
+	TContext,
+	TArgs
+> {
+	subscribe: SubscriptionSubscribeFn<
+		{ [key in TKey]: TResult },
+		TParent,
+		TContext,
+		TArgs
+	>
+	resolve?: SubscriptionResolveFn<
+		TResult,
+		{ [key in TKey]: TResult },
+		TContext,
+		TArgs
+	>
 }
 
 export interface SubscriptionResolverObject<TResult, TParent, TContext, TArgs> {
@@ -207,12 +229,26 @@ export interface SubscriptionResolverObject<TResult, TParent, TContext, TArgs> {
 	resolve: SubscriptionResolveFn<TResult, any, TContext, TArgs>
 }
 
-export type SubscriptionObject<TResult, TKey extends string, TParent, TContext, TArgs> =
+export type SubscriptionObject<
+	TResult,
+	TKey extends string,
+	TParent,
+	TContext,
+	TArgs
+> =
 	| SubscriptionSubscriberObject<TResult, TKey, TParent, TContext, TArgs>
 	| SubscriptionResolverObject<TResult, TParent, TContext, TArgs>
 
-export type SubscriptionResolver<TResult, TKey extends string, TParent = {}, TContext = {}, TArgs = {}> =
-	| ((...args: any[]) => SubscriptionObject<TResult, TKey, TParent, TContext, TArgs>)
+export type SubscriptionResolver<
+	TResult,
+	TKey extends string,
+	TParent = {},
+	TContext = {},
+	TArgs = {}
+> =
+	| ((
+			...args: any[]
+	  ) => SubscriptionObject<TResult, TKey, TParent, TContext, TArgs>)
 	| SubscriptionObject<TResult, TKey, TParent, TContext, TArgs>
 
 export type TypeResolveFn<TTypes, TParent = {}, TContext = {}> = (
@@ -221,11 +257,19 @@ export type TypeResolveFn<TTypes, TParent = {}, TContext = {}> = (
 	info: GraphQLResolveInfo
 ) => Maybe<TTypes>
 
-export type isTypeOfResolverFn<T = {}> = (obj: T, info: GraphQLResolveInfo) => boolean
+export type isTypeOfResolverFn<T = {}> = (
+	obj: T,
+	info: GraphQLResolveInfo
+) => boolean
 
 export type NextResolverFn<T> = () => Promise<T>
 
-export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs = {}> = (
+export type DirectiveResolverFn<
+	TResult = {},
+	TParent = {},
+	TContext = {},
+	TArgs = {}
+> = (
 	next: NextResolverFn<TResult>,
 	parent: TParent,
 	args: TArgs,
@@ -279,15 +323,18 @@ export type IResolversParentTypes = ResolversObject<{
 	Upload: Scalars["Upload"]
 }>
 
-export interface IDateScalarConfig extends GraphQLScalarTypeConfig<IResolversTypes["Date"], any> {
+export interface IDateScalarConfig
+	extends GraphQLScalarTypeConfig<IResolversTypes["Date"], any> {
 	name: "Date"
 }
 
-export interface IJsonScalarConfig extends GraphQLScalarTypeConfig<IResolversTypes["JSON"], any> {
+export interface IJsonScalarConfig
+	extends GraphQLScalarTypeConfig<IResolversTypes["JSON"], any> {
 	name: "JSON"
 }
 
-export interface IJsonObjectScalarConfig extends GraphQLScalarTypeConfig<IResolversTypes["JSONObject"], any> {
+export interface IJsonObjectScalarConfig
+	extends GraphQLScalarTypeConfig<IResolversTypes["JSONObject"], any> {
 	name: "JSONObject"
 }
 
@@ -366,15 +413,28 @@ export type IQueryResolvers<
 	ContextType = ApolloContext,
 	ParentType extends IResolversParentTypes["Query"] = IResolversParentTypes["Query"]
 > = ResolversObject<{
-	verifyUser?: Resolver<Maybe<IResolversTypes["User"]>, ParentType, ContextType, IQueryVerifyUserArgs>
-	readMyStore?: Resolver<Maybe<IResolversTypes["Store"]>, ParentType, ContextType>
+	verifyUser?: Resolver<
+		Maybe<IResolversTypes["User"]>,
+		ParentType,
+		ContextType,
+		IQueryVerifyUserArgs
+	>
+	readMyStore?: Resolver<
+		Maybe<IResolversTypes["Store"]>,
+		ParentType,
+		ContextType
+	>
 	getProductById?: Resolver<
 		Maybe<IResolversTypes["Product"]>,
 		ParentType,
 		ContextType,
 		RequireFields<IQueryGetProductByIdArgs, "id">
 	>
-	getMyProducts?: Resolver<Array<IResolversTypes["Product"]>, ParentType, ContextType>
+	getMyProducts?: Resolver<
+		Array<IResolversTypes["Product"]>,
+		ParentType,
+		ContextType
+	>
 }>
 
 export type IReviewResolvers<
@@ -418,7 +478,8 @@ export type IStoreResolvers<
 	__isTypeOf?: isTypeOfResolverFn<ParentType>
 }>
 
-export interface IUploadScalarConfig extends GraphQLScalarTypeConfig<IResolversTypes["Upload"], any> {
+export interface IUploadScalarConfig
+	extends GraphQLScalarTypeConfig<IResolversTypes["Upload"], any> {
 	name: "Upload"
 }
 
@@ -429,7 +490,11 @@ export type IUserResolvers<
 	_id?: Resolver<IResolversTypes["ID"], ParentType, ContextType>
 	name?: Resolver<IResolversTypes["String"], ParentType, ContextType>
 	email?: Resolver<IResolversTypes["String"], ParentType, ContextType>
-	permissions?: Resolver<Array<IResolversTypes["String"]>, ParentType, ContextType>
+	permissions?: Resolver<
+		Array<IResolversTypes["String"]>,
+		ParentType,
+		ContextType
+	>
 	store?: Resolver<Maybe<IResolversTypes["Store"]>, ParentType, ContextType>
 	createdAt?: Resolver<IResolversTypes["Date"], ParentType, ContextType>
 	updatedAt?: Resolver<IResolversTypes["Date"], ParentType, ContextType>
