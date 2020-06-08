@@ -72,10 +72,10 @@ export function clearAuthCookie(req: any, res: any) {
 	res.setHeader("Set-Cookie", [authCookie])
 }
 
-export function verifyAuthToken(cookies: string) {
+export function verifyAuthToken(authHeaders: string) {
 	try {
-		const cookiesExtracted = cookie.parse(cookies)
-		const authToken = cookiesExtracted[authCookieName]
+		const splitBearer = authHeaders.split("Bearer ")
+		const authToken = splitBearer[1]
 		const decoded = jwt.verify(authToken, secretKey)
 		if (typeof decoded === "object") {
 			return decoded

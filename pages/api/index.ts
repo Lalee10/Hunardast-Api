@@ -11,17 +11,16 @@ const apolloServer = new ApolloServer({
 	resolvers: resolvers,
 	context: ({ req, res }): ApolloContext => {
 		const db = getDb()
-
 		const user = verifyAuthToken(
-			req.headers.cookie || ""
+			req.headers.authorization || ""
 		) as ApolloContext["user"]
 
 		console.log(
 			"Request: ",
 			user?._id,
-			req.headers["user-agent"]?.split(" ")[0],
-			typeof req.headers.cookie
+			req.headers["user-agent"]?.split(" ")[0]
 		)
+
 		return { req, res, db, user }
 	},
 	playground: true,
@@ -39,11 +38,8 @@ export const config = {
 }
 
 export default (req: NextApiRequest, res: NextApiResponse) => {
-	const origin = req.headers.origin ? `${req.headers.origin}` : "*"
-	console.log("Origin: ", origin)
-
 	// Allow Origins
-	res.setHeader("Access-Control-Allow-Origin", origin)
+	res.setHeader("Access-Control-Allow-Origin", "*")
 	// Allow Methods
 	res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
 	// Allow Headers
@@ -51,8 +47,6 @@ export default (req: NextApiRequest, res: NextApiResponse) => {
 		"Access-Control-Allow-Headers",
 		"Origin, Accept, Content-Type, Authorization"
 	)
-	// Allow credentials
-	res.setHeader("Access-Control-Allow-Credentials", "true")
 
 	if (req.method === "OPTIONS") {
 		res.status(200).end()
