@@ -15,8 +15,8 @@ const resolvers: IResolvers = {
 			if (typeof value === "string") value = new Date(value)
 			return value.toISOString()
 		},
-		parseValue: (value) => new Date(value),
-		parseLiteral: (ast) => {
+		parseValue: (value: string) => new Date(value),
+		parseLiteral: (ast: any) => {
 			if (ast.kind === Kind.INT) {
 				return new Date(ast.value) // ast value is always in string format
 			}

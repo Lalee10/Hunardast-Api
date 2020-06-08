@@ -47,7 +47,7 @@ export const authQueries: IQueryResolvers = {
 export const authMutations: IMutationResolvers = {
 	registerUser: async (root, args, ctx) => {
 		const { name, email, password } = args
-		const { db, res } = ctx
+		const { db } = ctx
 
 		await validateEmail(db, email)
 
@@ -61,15 +61,13 @@ export const authMutations: IMutationResolvers = {
 		const store = await ctx.db.Store.findById(created.store).lean()
 		const authUser = authResponseUser(created, store)
 
-		// Get the JWT for the created user and instruct response to set cookie
 		const token = getToken(authUser)
-		setAuthCookie(ctx.req, res, token)
-
-		return authUser
+		return { user: authUser, token }
 	},
 	loginUser: async (root, args, ctx) => {
 		const { email, password } = args
-		const { db, req, res } = ctx
+		const { db } = ctx
+
 		// Check if email is valid
 		const user = await db.User.findOne({ email })
 		if (!user) throw new ApolloError("Authentication Failed!", "AUTH_FAILED")
@@ -82,11 +80,8 @@ export const authMutations: IMutationResolvers = {
 		const store = await ctx.db.Store.findById(user.store).lean()
 		const authUser = authResponseUser(user, store)
 
-		// Get the JWT for the created user and instruct response to set cookie
 		const token = getToken(authUser)
-		setAuthCookie(req, res, token)
-
-		return authUser
+		return { user: authUser, token }
 	},
 	logoutUser: (root, args, ctx) => {
 		const { req, res } = ctx

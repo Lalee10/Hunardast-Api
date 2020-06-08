@@ -26,6 +26,12 @@ export type Scalars = {
 	Upload: any
 }
 
+export type IAuthResponse = {
+	__typename?: "AuthResponse"
+	user: IUser
+	token: Scalars["String"]
+}
+
 export enum ICacheControlScope {
 	Public = "PUBLIC",
 	Private = "PRIVATE",
@@ -34,9 +40,9 @@ export enum ICacheControlScope {
 export type IMutation = {
 	__typename?: "Mutation"
 	getSignedUrl: IS3Payload
-	loginUser: IUser
+	registerUser: IAuthResponse
+	loginUser: IAuthResponse
 	logoutUser: Scalars["String"]
-	registerUser: IUser
 	createStore: IStore
 	updateStore?: Maybe<IStore>
 	createProduct: IProduct
@@ -48,15 +54,15 @@ export type IMutationGetSignedUrlArgs = {
 	fileType: Scalars["String"]
 }
 
-export type IMutationLoginUserArgs = {
-	password: Scalars["String"]
-	email: Scalars["String"]
-}
-
 export type IMutationRegisterUserArgs = {
 	password: Scalars["String"]
 	email: Scalars["String"]
 	name: Scalars["String"]
+}
+
+export type IMutationLoginUserArgs = {
+	password: Scalars["String"]
+	email: Scalars["String"]
 }
 
 export type IMutationCreateStoreArgs = {
@@ -291,6 +297,7 @@ export type IResolversTypes = ResolversObject<{
 	Int: ResolverTypeWrapper<Scalars["Int"]>
 	Mutation: ResolverTypeWrapper<{}>
 	S3Payload: ResolverTypeWrapper<IS3Payload>
+	AuthResponse: ResolverTypeWrapper<IAuthResponse>
 	StoreCreateInput: IStoreCreateInput
 	StoreUpdateInput: IStoreUpdateInput
 	JSONObject: ResolverTypeWrapper<Scalars["JSONObject"]>
@@ -314,6 +321,7 @@ export type IResolversParentTypes = ResolversObject<{
 	Int: Scalars["Int"]
 	Mutation: {}
 	S3Payload: IS3Payload
+	AuthResponse: IAuthResponse
 	StoreCreateInput: IStoreCreateInput
 	StoreUpdateInput: IStoreUpdateInput
 	JSONObject: Scalars["JSONObject"]
@@ -321,6 +329,15 @@ export type IResolversParentTypes = ResolversObject<{
 	Review: IReview
 	CacheControlScope: ICacheControlScope
 	Upload: Scalars["Upload"]
+}>
+
+export type IAuthResponseResolvers<
+	ContextType = ApolloContext,
+	ParentType extends IResolversParentTypes["AuthResponse"] = IResolversParentTypes["AuthResponse"]
+> = ResolversObject<{
+	user?: Resolver<IResolversTypes["User"], ParentType, ContextType>
+	token?: Resolver<IResolversTypes["String"], ParentType, ContextType>
+	__isTypeOf?: isTypeOfResolverFn<ParentType>
 }>
 
 export interface IDateScalarConfig
@@ -348,19 +365,19 @@ export type IMutationResolvers<
 		ContextType,
 		RequireFields<IMutationGetSignedUrlArgs, "fileName" | "fileType">
 	>
+	registerUser?: Resolver<
+		IResolversTypes["AuthResponse"],
+		ParentType,
+		ContextType,
+		RequireFields<IMutationRegisterUserArgs, "password" | "email" | "name">
+	>
 	loginUser?: Resolver<
-		IResolversTypes["User"],
+		IResolversTypes["AuthResponse"],
 		ParentType,
 		ContextType,
 		RequireFields<IMutationLoginUserArgs, "password" | "email">
 	>
 	logoutUser?: Resolver<IResolversTypes["String"], ParentType, ContextType>
-	registerUser?: Resolver<
-		IResolversTypes["User"],
-		ParentType,
-		ContextType,
-		RequireFields<IMutationRegisterUserArgs, "password" | "email" | "name">
-	>
 	createStore?: Resolver<
 		IResolversTypes["Store"],
 		ParentType,
@@ -502,6 +519,7 @@ export type IUserResolvers<
 }>
 
 export type IResolvers<ContextType = ApolloContext> = ResolversObject<{
+	AuthResponse?: IAuthResponseResolvers<ContextType>
 	Date?: GraphQLScalarType
 	JSON?: GraphQLScalarType
 	JSONObject?: GraphQLScalarType

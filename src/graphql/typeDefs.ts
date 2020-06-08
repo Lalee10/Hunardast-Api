@@ -76,14 +76,23 @@ const typeDefs = gql`
 		url: String!
 	}
 
+	type AuthResponse {
+		user: User!
+		token: String!
+	}
+
 	type Mutation {
 		# AWS S3
 		getSignedUrl(fileName: String!, fileType: String!): S3Payload!
 
 		# User
-		loginUser(password: String!, email: String!): User!
+		registerUser(
+			password: String!
+			email: String!
+			name: String!
+		): AuthResponse!
+		loginUser(password: String!, email: String!): AuthResponse!
 		logoutUser: String!
-		registerUser(password: String!, email: String!, name: String!): User!
 
 		# Store
 		createStore(data: StoreCreateInput!): Store!
