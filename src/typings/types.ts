@@ -18,10 +18,10 @@ export type Scalars = {
 	Float: number
 	/** A date and time, represented as an ISO-8601 string */
 	Date: Date
-	/** The `JSONObject` scalar type represents JSON objects as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf). */
-	JSONObject: any
 	/** The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf). */
 	JSON: any
+	/** The `JSONObject` scalar type represents JSON objects as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf). */
+	JSONObject: any
 	/** The `Upload` scalar type represents a file upload. */
 	Upload: any
 }
@@ -93,7 +93,7 @@ export type IProduct = {
 	description: Scalars["String"]
 	sizes: Array<Scalars["String"]>
 	colors: Array<Scalars["String"]>
-	store: Scalars["String"]
+	store: IStore
 	renewalType: Scalars["String"]
 	expiresAt: Scalars["Date"]
 	inStock: Scalars["Int"]
@@ -107,6 +107,7 @@ export type IQuery = {
 	readMyStore?: Maybe<IStore>
 	getProductById?: Maybe<IProduct>
 	getMyProducts: Array<IProduct>
+	getProducts: Array<IProduct>
 }
 
 export type IQueryVerifyUserArgs = {
@@ -115,6 +116,17 @@ export type IQueryVerifyUserArgs = {
 
 export type IQueryGetProductByIdArgs = {
 	id: Scalars["String"]
+}
+
+export type IQueryGetMyProductsArgs = {
+	query?: Maybe<Scalars["JSON"]>
+}
+
+export type IQueryGetProductsArgs = {
+	query?: Maybe<Scalars["JSON"]>
+	limit?: Maybe<Scalars["Int"]>
+	offset?: Maybe<Scalars["Int"]>
+	sort?: Maybe<Scalars["JSON"]>
 }
 
 export type IReview = {
@@ -295,13 +307,13 @@ export type IResolversTypes = ResolversObject<{
 	Product: ResolverTypeWrapper<IProduct>
 	Float: ResolverTypeWrapper<Scalars["Float"]>
 	Int: ResolverTypeWrapper<Scalars["Int"]>
+	JSON: ResolverTypeWrapper<Scalars["JSON"]>
 	Mutation: ResolverTypeWrapper<{}>
 	S3Payload: ResolverTypeWrapper<IS3Payload>
 	AuthResponse: ResolverTypeWrapper<IAuthResponse>
 	StoreCreateInput: IStoreCreateInput
 	StoreUpdateInput: IStoreUpdateInput
 	JSONObject: ResolverTypeWrapper<Scalars["JSONObject"]>
-	JSON: ResolverTypeWrapper<Scalars["JSON"]>
 	Review: ResolverTypeWrapper<IReview>
 	CacheControlScope: ICacheControlScope
 	Upload: ResolverTypeWrapper<Scalars["Upload"]>
@@ -319,13 +331,13 @@ export type IResolversParentTypes = ResolversObject<{
 	Product: IProduct
 	Float: Scalars["Float"]
 	Int: Scalars["Int"]
+	JSON: Scalars["JSON"]
 	Mutation: {}
 	S3Payload: IS3Payload
 	AuthResponse: IAuthResponse
 	StoreCreateInput: IStoreCreateInput
 	StoreUpdateInput: IStoreUpdateInput
 	JSONObject: Scalars["JSONObject"]
-	JSON: Scalars["JSON"]
 	Review: IReview
 	CacheControlScope: ICacheControlScope
 	Upload: Scalars["Upload"]
@@ -417,7 +429,7 @@ export type IProductResolvers<
 	description?: Resolver<IResolversTypes["String"], ParentType, ContextType>
 	sizes?: Resolver<Array<IResolversTypes["String"]>, ParentType, ContextType>
 	colors?: Resolver<Array<IResolversTypes["String"]>, ParentType, ContextType>
-	store?: Resolver<IResolversTypes["String"], ParentType, ContextType>
+	store?: Resolver<IResolversTypes["Store"], ParentType, ContextType>
 	renewalType?: Resolver<IResolversTypes["String"], ParentType, ContextType>
 	expiresAt?: Resolver<IResolversTypes["Date"], ParentType, ContextType>
 	inStock?: Resolver<IResolversTypes["Int"], ParentType, ContextType>
@@ -450,7 +462,14 @@ export type IQueryResolvers<
 	getMyProducts?: Resolver<
 		Array<IResolversTypes["Product"]>,
 		ParentType,
-		ContextType
+		ContextType,
+		IQueryGetMyProductsArgs
+	>
+	getProducts?: Resolver<
+		Array<IResolversTypes["Product"]>,
+		ParentType,
+		ContextType,
+		RequireFields<IQueryGetProductsArgs, "limit" | "offset">
 	>
 }>
 

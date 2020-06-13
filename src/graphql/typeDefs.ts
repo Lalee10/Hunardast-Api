@@ -49,7 +49,7 @@ const typeDefs = gql`
 		description: String!
 		sizes: [String!]!
 		colors: [String!]!
-		store: String!
+		store: Store!
 		renewalType: String!
 		expiresAt: Date!
 		inStock: Int!
@@ -109,7 +109,13 @@ const typeDefs = gql`
 
 		# Product
 		getProductById(id: String!): Product
-		getMyProducts: [Product!]!
+		getMyProducts(query: JSON): [Product!]!
+		getProducts(
+			query: JSON
+			limit: Int = 100
+			offset: Int = 0
+			sort: JSON
+		): [Product!]!
 	}
 `
 

@@ -16,6 +16,19 @@ async function getUserStore(ctx: ApolloContext) {
 }
 
 export const productQueries: IQueryResolvers = {
+	getProducts: async function (root, args, ctx) {
+		const sort = args.sort || { createdAt: -1 }
+		console.log("Args: ", args.query)
+		return await ctx.db.Product.find({
+			...args.query,
+			"images.0": { $exists: true },
+		})
+			.sort({ createdAt: -1 })
+			.skip(args.offset)
+			.limit(args.limit)
+			.populate("store")
+			.lean()
+	},
 	getMyProducts: async function (root, args, ctx) {
 		const store = await getUserStore(ctx)
 		return await ctx.db.Product.find({ store: store._id })
