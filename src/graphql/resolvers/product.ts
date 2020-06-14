@@ -18,12 +18,11 @@ async function getUserStore(ctx: ApolloContext) {
 export const productQueries: IQueryResolvers = {
 	getProducts: async function (root, args, ctx) {
 		const sort = args.sort || { createdAt: -1 }
-		console.log("Args: ", args.query)
 		return await ctx.db.Product.find({
 			...args.query,
 			"images.0": { $exists: true },
 		})
-			.sort({ createdAt: -1 })
+			.sort(sort)
 			.skip(args.offset)
 			.limit(args.limit)
 			.populate("store")
@@ -32,9 +31,11 @@ export const productQueries: IQueryResolvers = {
 	getMyProducts: async function (root, args, ctx) {
 		const store = await getUserStore(ctx)
 		return await ctx.db.Product.find({ store: store._id })
+			.populate("store")
+			.lean()
 	},
 	getProductById: async function (root, args, ctx) {
-		return await ctx.db.Product.findById(args.id)
+		return await ctx.db.Product.findById(args.id).populate("store").lean()
 	},
 }
 
