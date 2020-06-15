@@ -1,9 +1,15 @@
-import { ApolloError } from "apollo-server-micro"
+import { ApolloError, AuthenticationError } from "apollo-server-micro"
 import { IMutationResolvers, IQueryResolvers } from "../../typings/types"
 
 export const orderQueries: IQueryResolvers = {
 	getOrders: async function (root, args, ctx) {
-		return await ctx.db.Order.find(args.query)
+		if (!ctx.user._id)
+			throw new AuthenticationError("You msut be logged in to view orders")
+
+		return await ctx.db.Order.find({
+			store: ctx.user.store._id,
+			...args.query,
+		})
 			.populate("product")
 			.populate("store")
 			.populate("placedBy")
@@ -14,6 +20,7 @@ export const orderQueries: IQueryResolvers = {
 export const orderMutations: IMutationResolvers = {
 	createOrder: async function (root, args, ctx) {
 		const maxId = await ctx.db.Order.findOne().sort({ orderNo: -1 })
+
 		const product = await ctx.db.Product.findById(args.data.productId)
 		if (!product) throw new ApolloError("No product found", "NOT_FOUND")
 
@@ -22,7 +29,7 @@ export const orderMutations: IMutationResolvers = {
 		}
 
 		const created = await ctx.db.Order.create({
-			orderNo: maxId || 1000,
+			orderNo: maxId.orderNo || 1000,
 			...args.data,
 			product: product._id,
 			store: product.store,

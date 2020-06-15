@@ -64,8 +64,8 @@ export const productMutations: IMutationResolvers = {
 			product._id,
 			updatedProduct,
 			{ new: true }
-		)
-		return updated as IProduct
+		).populate("store")
+		return updated
 	},
 	updateCart: async function (root, args, ctx) {
 		const updatedCart = args.data

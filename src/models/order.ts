@@ -21,7 +21,7 @@ export interface IOrderDb extends Document, Timestamp {
 	size: string
 	personalization: string
 	details: OrderDetails
-	status: "Pending" | "Confirmed" | "Shipping" | "Completed" | "Cancelled"
+	status: "Pending" | "Verified" | "Shipped" | "Completed" | "Cancelled"
 	verified: boolean
 	product: IProductDb["_id"]
 	store: IStoreDb["_id"]
