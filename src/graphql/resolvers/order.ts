@@ -29,7 +29,7 @@ export const orderMutations: IMutationResolvers = {
 		}
 
 		const created = await ctx.db.Order.create({
-			orderNo: maxId ? maxId.orderNo || 1000,
+			orderNo: maxId ? maxId.orderNo : 1000,
 			...args.data,
 			product: product._id,
 			store: product.store,
