@@ -4,6 +4,7 @@ import userSchema from "./user"
 import productSchema from "./product"
 import reviewSchema from "./review"
 import storeSchema from "./store"
+import orderSchema from "./order"
 
 const DB_STRING = `${process.env.HD_MONGO_URI}`
 
@@ -30,6 +31,7 @@ export const getDb = (dbName = "hunardast"): CoreDatabase => {
 			Review: conn.model("Review", reviewSchema),
 			Store: conn.model("Store", storeSchema),
 			User: conn.model("User", userSchema),
+			Order: conn.model("Order", orderSchema),
 		}
 
 		databases[dbName] = db

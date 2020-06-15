@@ -67,4 +67,9 @@ export const productMutations: IMutationResolvers = {
 		)
 		return updated as IProduct
 	},
+	updateCart: async function (root, args, ctx) {
+		const updatedCart = args.data
+		await ctx.db.User.findByIdAndUpdate(ctx.user._id, { cart: updatedCart })
+		return args.data
+	},
 }

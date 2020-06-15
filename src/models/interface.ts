@@ -5,6 +5,7 @@ import { IStoreDb } from "./store"
 import { IProductDb } from "./product"
 import { IReviewDb } from "./review"
 import { IUser } from "../typings/types"
+import { IOrderDb } from "./order"
 
 export interface Timestamp {
 	createdAt: Date
@@ -16,6 +17,7 @@ export interface CoreDatabase {
 	Store: Model<IStoreDb & Document>
 	Product: Model<IProductDb & Document>
 	Review: Model<IReviewDb & Document>
+	Order: Model<IOrderDb & Document>
 }
 
 export type Nullable<T> = T | null

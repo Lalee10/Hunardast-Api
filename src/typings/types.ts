@@ -16,12 +16,12 @@ export type Scalars = {
 	Boolean: boolean
 	Int: number
 	Float: number
+	/** The `JSONObject` scalar type represents JSON objects as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf). */
+	JSONObject: any
 	/** A date and time, represented as an ISO-8601 string */
 	Date: Date
 	/** The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf). */
 	JSON: any
-	/** The `JSONObject` scalar type represents JSON objects as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf). */
-	JSONObject: any
 	/** The `Upload` scalar type represents a file upload. */
 	Upload: any
 }
@@ -30,6 +30,8 @@ export type IAuthResponse = {
 	__typename?: "AuthResponse"
 	user: IUser
 	token: Scalars["String"]
+	cart: Scalars["JSON"]
+	profile: Scalars["JSON"]
 }
 
 export enum ICacheControlScope {
@@ -47,6 +49,9 @@ export type IMutation = {
 	updateStore?: Maybe<IStore>
 	createProduct: IProduct
 	updateProduct: IProduct
+	createOrder: IOrder
+	updateOrder: IOrder
+	updateCart: Array<Scalars["JSONObject"]>
 }
 
 export type IMutationGetSignedUrlArgs = {
@@ -82,6 +87,38 @@ export type IMutationUpdateProductArgs = {
 	data: Scalars["JSONObject"]
 }
 
+export type IMutationCreateOrderArgs = {
+	data: Scalars["JSONObject"]
+}
+
+export type IMutationUpdateOrderArgs = {
+	id: Scalars["ID"]
+	data: Scalars["JSONObject"]
+}
+
+export type IMutationUpdateCartArgs = {
+	data: Array<Scalars["JSONObject"]>
+}
+
+export type IOrder = {
+	__typename?: "Order"
+	_id: Scalars["ID"]
+	orderNo: Scalars["Int"]
+	amount: Scalars["Float"]
+	quantity: Scalars["Int"]
+	color: Scalars["String"]
+	size: Scalars["String"]
+	personalization: Scalars["String"]
+	details?: Maybe<Scalars["JSON"]>
+	status: Scalars["String"]
+	verified: Scalars["Boolean"]
+	product: IProduct
+	store: IStore
+	placedBy: IUser
+	createdAt: Scalars["Date"]
+	updatedAt: Scalars["Date"]
+}
+
 export type IProduct = {
 	__typename?: "Product"
 	_id: Scalars["ID"]
@@ -103,11 +140,17 @@ export type IProduct = {
 
 export type IQuery = {
 	__typename?: "Query"
+	validateCart: Array<IProduct>
 	verifyUser?: Maybe<IUser>
 	readMyStore?: Maybe<IStore>
 	getProductById?: Maybe<IProduct>
 	getMyProducts: Array<IProduct>
 	getProducts: Array<IProduct>
+	getOrders: Array<IOrder>
+}
+
+export type IQueryValidateCartArgs = {
+	data: Array<Scalars["JSONObject"]>
 }
 
 export type IQueryVerifyUserArgs = {
@@ -127,6 +170,10 @@ export type IQueryGetProductsArgs = {
 	limit?: Maybe<Scalars["Int"]>
 	offset?: Maybe<Scalars["Int"]>
 	sort?: Maybe<Scalars["JSON"]>
+}
+
+export type IQueryGetOrdersArgs = {
+	query?: Maybe<Scalars["JSON"]>
 }
 
 export type IReview = {
@@ -184,6 +231,8 @@ export type IUser = {
 	store?: Maybe<IStore>
 	createdAt: Scalars["Date"]
 	updatedAt: Scalars["Date"]
+	cart?: Maybe<Scalars["JSON"]>
+	profile?: Maybe<Scalars["JSON"]>
 }
 
 export type WithIndex<TObject> = TObject & Record<string, any>
@@ -298,22 +347,23 @@ export type DirectiveResolverFn<
 /** Mapping between all available schema types and the resolvers types */
 export type IResolversTypes = ResolversObject<{
 	Query: ResolverTypeWrapper<{}>
-	Boolean: ResolverTypeWrapper<Scalars["Boolean"]>
-	User: ResolverTypeWrapper<IUser>
+	JSONObject: ResolverTypeWrapper<Scalars["JSONObject"]>
+	Product: ResolverTypeWrapper<IProduct>
 	ID: ResolverTypeWrapper<Scalars["ID"]>
 	String: ResolverTypeWrapper<Scalars["String"]>
+	Float: ResolverTypeWrapper<Scalars["Float"]>
 	Store: ResolverTypeWrapper<IStore>
 	Date: ResolverTypeWrapper<Scalars["Date"]>
-	Product: ResolverTypeWrapper<IProduct>
-	Float: ResolverTypeWrapper<Scalars["Float"]>
 	Int: ResolverTypeWrapper<Scalars["Int"]>
+	Boolean: ResolverTypeWrapper<Scalars["Boolean"]>
+	User: ResolverTypeWrapper<IUser>
 	JSON: ResolverTypeWrapper<Scalars["JSON"]>
+	Order: ResolverTypeWrapper<IOrder>
 	Mutation: ResolverTypeWrapper<{}>
 	S3Payload: ResolverTypeWrapper<IS3Payload>
 	AuthResponse: ResolverTypeWrapper<IAuthResponse>
 	StoreCreateInput: IStoreCreateInput
 	StoreUpdateInput: IStoreUpdateInput
-	JSONObject: ResolverTypeWrapper<Scalars["JSONObject"]>
 	Review: ResolverTypeWrapper<IReview>
 	CacheControlScope: ICacheControlScope
 	Upload: ResolverTypeWrapper<Scalars["Upload"]>
@@ -322,22 +372,23 @@ export type IResolversTypes = ResolversObject<{
 /** Mapping between all available schema types and the resolvers parents */
 export type IResolversParentTypes = ResolversObject<{
 	Query: {}
-	Boolean: Scalars["Boolean"]
-	User: IUser
+	JSONObject: Scalars["JSONObject"]
+	Product: IProduct
 	ID: Scalars["ID"]
 	String: Scalars["String"]
+	Float: Scalars["Float"]
 	Store: IStore
 	Date: Scalars["Date"]
-	Product: IProduct
-	Float: Scalars["Float"]
 	Int: Scalars["Int"]
+	Boolean: Scalars["Boolean"]
+	User: IUser
 	JSON: Scalars["JSON"]
+	Order: IOrder
 	Mutation: {}
 	S3Payload: IS3Payload
 	AuthResponse: IAuthResponse
 	StoreCreateInput: IStoreCreateInput
 	StoreUpdateInput: IStoreUpdateInput
-	JSONObject: Scalars["JSONObject"]
 	Review: IReview
 	CacheControlScope: ICacheControlScope
 	Upload: Scalars["Upload"]
@@ -349,6 +400,8 @@ export type IAuthResponseResolvers<
 > = ResolversObject<{
 	user?: Resolver<IResolversTypes["User"], ParentType, ContextType>
 	token?: Resolver<IResolversTypes["String"], ParentType, ContextType>
+	cart?: Resolver<IResolversTypes["JSON"], ParentType, ContextType>
+	profile?: Resolver<IResolversTypes["JSON"], ParentType, ContextType>
 	__isTypeOf?: isTypeOfResolverFn<ParentType>
 }>
 
@@ -414,6 +467,50 @@ export type IMutationResolvers<
 		ContextType,
 		RequireFields<IMutationUpdateProductArgs, "id" | "data">
 	>
+	createOrder?: Resolver<
+		IResolversTypes["Order"],
+		ParentType,
+		ContextType,
+		RequireFields<IMutationCreateOrderArgs, "data">
+	>
+	updateOrder?: Resolver<
+		IResolversTypes["Order"],
+		ParentType,
+		ContextType,
+		RequireFields<IMutationUpdateOrderArgs, "id" | "data">
+	>
+	updateCart?: Resolver<
+		Array<IResolversTypes["JSONObject"]>,
+		ParentType,
+		ContextType,
+		RequireFields<IMutationUpdateCartArgs, "data">
+	>
+}>
+
+export type IOrderResolvers<
+	ContextType = ApolloContext,
+	ParentType extends IResolversParentTypes["Order"] = IResolversParentTypes["Order"]
+> = ResolversObject<{
+	_id?: Resolver<IResolversTypes["ID"], ParentType, ContextType>
+	orderNo?: Resolver<IResolversTypes["Int"], ParentType, ContextType>
+	amount?: Resolver<IResolversTypes["Float"], ParentType, ContextType>
+	quantity?: Resolver<IResolversTypes["Int"], ParentType, ContextType>
+	color?: Resolver<IResolversTypes["String"], ParentType, ContextType>
+	size?: Resolver<IResolversTypes["String"], ParentType, ContextType>
+	personalization?: Resolver<
+		IResolversTypes["String"],
+		ParentType,
+		ContextType
+	>
+	details?: Resolver<Maybe<IResolversTypes["JSON"]>, ParentType, ContextType>
+	status?: Resolver<IResolversTypes["String"], ParentType, ContextType>
+	verified?: Resolver<IResolversTypes["Boolean"], ParentType, ContextType>
+	product?: Resolver<IResolversTypes["Product"], ParentType, ContextType>
+	store?: Resolver<IResolversTypes["Store"], ParentType, ContextType>
+	placedBy?: Resolver<IResolversTypes["User"], ParentType, ContextType>
+	createdAt?: Resolver<IResolversTypes["Date"], ParentType, ContextType>
+	updatedAt?: Resolver<IResolversTypes["Date"], ParentType, ContextType>
+	__isTypeOf?: isTypeOfResolverFn<ParentType>
 }>
 
 export type IProductResolvers<
@@ -442,6 +539,12 @@ export type IQueryResolvers<
 	ContextType = ApolloContext,
 	ParentType extends IResolversParentTypes["Query"] = IResolversParentTypes["Query"]
 > = ResolversObject<{
+	validateCart?: Resolver<
+		Array<IResolversTypes["Product"]>,
+		ParentType,
+		ContextType,
+		RequireFields<IQueryValidateCartArgs, "data">
+	>
 	verifyUser?: Resolver<
 		Maybe<IResolversTypes["User"]>,
 		ParentType,
@@ -470,6 +573,12 @@ export type IQueryResolvers<
 		ParentType,
 		ContextType,
 		RequireFields<IQueryGetProductsArgs, "limit" | "offset">
+	>
+	getOrders?: Resolver<
+		Array<IResolversTypes["Order"]>,
+		ParentType,
+		ContextType,
+		IQueryGetOrdersArgs
 	>
 }>
 
@@ -534,6 +643,8 @@ export type IUserResolvers<
 	store?: Resolver<Maybe<IResolversTypes["Store"]>, ParentType, ContextType>
 	createdAt?: Resolver<IResolversTypes["Date"], ParentType, ContextType>
 	updatedAt?: Resolver<IResolversTypes["Date"], ParentType, ContextType>
+	cart?: Resolver<Maybe<IResolversTypes["JSON"]>, ParentType, ContextType>
+	profile?: Resolver<Maybe<IResolversTypes["JSON"]>, ParentType, ContextType>
 	__isTypeOf?: isTypeOfResolverFn<ParentType>
 }>
 
@@ -543,6 +654,7 @@ export type IResolvers<ContextType = ApolloContext> = ResolversObject<{
 	JSON?: GraphQLScalarType
 	JSONObject?: GraphQLScalarType
 	Mutation?: IMutationResolvers<ContextType>
+	Order?: IOrderResolvers<ContextType>
 	Product?: IProductResolvers<ContextType>
 	Query?: IQueryResolvers<ContextType>
 	Review?: IReviewResolvers<ContextType>

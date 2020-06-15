@@ -29,6 +29,8 @@ function authResponseUser(
 		store: store,
 		createdAt: user.createdAt,
 		updatedAt: user.updatedAt,
+		cart: user.cart,
+		profile: user.profile,
 	}
 }
 
@@ -62,7 +64,12 @@ export const authMutations: IMutationResolvers = {
 		const authUser = authResponseUser(created, store)
 
 		const token = getToken(authUser)
-		return { user: authUser, token }
+		return {
+			user: authUser,
+			token,
+			profile: created.profile,
+			cart: created.cart,
+		}
 	},
 	loginUser: async (root, args, ctx) => {
 		const { email, password } = args
@@ -81,7 +88,12 @@ export const authMutations: IMutationResolvers = {
 		const authUser = authResponseUser(user, store)
 
 		const token = getToken(authUser)
-		return { user: authUser, token }
+		return {
+			user: authUser,
+			token,
+			profile: user.profile,
+			cart: user.cart,
+		}
 	},
 	logoutUser: (root, args, ctx) => {
 		const { req, res } = ctx

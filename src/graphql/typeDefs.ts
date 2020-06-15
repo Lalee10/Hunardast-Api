@@ -13,6 +13,8 @@ const typeDefs = gql`
 		store: Store
 		createdAt: Date!
 		updatedAt: Date!
+		cart: JSON
+		profile: JSON
 	}
 
 	type Store {
@@ -57,6 +59,24 @@ const typeDefs = gql`
 		updatedAt: Date!
 	}
 
+	type Order {
+		_id: ID!
+		orderNo: Int!
+		amount: Float!
+		quantity: Int!
+		color: String!
+		size: String!
+		personalization: String!
+		details: JSON
+		status: String!
+		verified: Boolean!
+		product: Product!
+		store: Store!
+		placedBy: User!
+		createdAt: Date!
+		updatedAt: Date!
+	}
+
 	input StoreCreateInput {
 		name: String!
 		location: String!
@@ -79,6 +99,8 @@ const typeDefs = gql`
 	type AuthResponse {
 		user: User!
 		token: String!
+		cart: JSON!
+		profile: JSON!
 	}
 
 	type Mutation {
@@ -101,9 +123,17 @@ const typeDefs = gql`
 		# Product
 		createProduct(data: JSONObject!): Product!
 		updateProduct(id: ID!, data: JSONObject!): Product!
+
+		# Order
+		createOrder(data: JSONObject!): Order!
+		updateOrder(id: ID!, data: JSONObject!): Order!
+
+		# Cart
+		updateCart(data: [JSONObject!]!): [JSONObject!]!
 	}
 
 	type Query {
+		validateCart(data: [JSONObject!]!): [Product!]!
 		verifyUser(required: Boolean): User
 		readMyStore: Store
 
@@ -116,6 +146,9 @@ const typeDefs = gql`
 			offset: Int = 0
 			sort: JSON
 		): [Product!]!
+
+		# Order
+		getOrders(query: JSON): [Order!]!
 	}
 `
 
