@@ -13,7 +13,6 @@ const typeDefs = gql`
 		store: Store
 		createdAt: Date!
 		updatedAt: Date!
-		cart: JSON
 		profile: JSON
 	}
 
@@ -99,8 +98,7 @@ const typeDefs = gql`
 	type AuthResponse {
 		user: User!
 		token: String!
-		cart: JSON!
-		profile: JSON!
+		profile: JSON
 	}
 
 	type Mutation {

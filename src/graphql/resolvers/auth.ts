@@ -29,7 +29,6 @@ function authResponseUser(
 		store: store,
 		createdAt: user.createdAt,
 		updatedAt: user.updatedAt,
-		cart: user.cart,
 		profile: user.profile,
 	}
 }
@@ -68,7 +67,6 @@ export const authMutations: IMutationResolvers = {
 			user: authUser,
 			token,
 			profile: created.profile,
-			cart: created.cart,
 		}
 	},
 	loginUser: async (root, args, ctx) => {
@@ -92,7 +90,6 @@ export const authMutations: IMutationResolvers = {
 			user: authUser,
 			token,
 			profile: user.profile,
-			cart: user.cart,
 		}
 	},
 	logoutUser: (root, args, ctx) => {

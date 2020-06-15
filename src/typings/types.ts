@@ -30,8 +30,7 @@ export type IAuthResponse = {
 	__typename?: "AuthResponse"
 	user: IUser
 	token: Scalars["String"]
-	cart: Scalars["JSON"]
-	profile: Scalars["JSON"]
+	profile?: Maybe<Scalars["JSON"]>
 }
 
 export enum ICacheControlScope {
@@ -231,7 +230,6 @@ export type IUser = {
 	store?: Maybe<IStore>
 	createdAt: Scalars["Date"]
 	updatedAt: Scalars["Date"]
-	cart?: Maybe<Scalars["JSON"]>
 	profile?: Maybe<Scalars["JSON"]>
 }
 
@@ -400,8 +398,7 @@ export type IAuthResponseResolvers<
 > = ResolversObject<{
 	user?: Resolver<IResolversTypes["User"], ParentType, ContextType>
 	token?: Resolver<IResolversTypes["String"], ParentType, ContextType>
-	cart?: Resolver<IResolversTypes["JSON"], ParentType, ContextType>
-	profile?: Resolver<IResolversTypes["JSON"], ParentType, ContextType>
+	profile?: Resolver<Maybe<IResolversTypes["JSON"]>, ParentType, ContextType>
 	__isTypeOf?: isTypeOfResolverFn<ParentType>
 }>
 
@@ -643,7 +640,6 @@ export type IUserResolvers<
 	store?: Resolver<Maybe<IResolversTypes["Store"]>, ParentType, ContextType>
 	createdAt?: Resolver<IResolversTypes["Date"], ParentType, ContextType>
 	updatedAt?: Resolver<IResolversTypes["Date"], ParentType, ContextType>
-	cart?: Resolver<Maybe<IResolversTypes["JSON"]>, ParentType, ContextType>
 	profile?: Resolver<Maybe<IResolversTypes["JSON"]>, ParentType, ContextType>
 	__isTypeOf?: isTypeOfResolverFn<ParentType>
 }>

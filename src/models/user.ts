@@ -15,7 +15,6 @@ export interface IUserDb extends Document, Timestamp {
 	password: string
 	permissions: string[]
 	store: IStore | string | null
-	cart: any
 	profile: Profile
 }
 
@@ -38,7 +37,6 @@ const userSchema: Schema = new Schema(
 			trim: true,
 		},
 		store: { type: Schema.Types.ObjectId, ref: "Store", default: null },
-		cart: { type: [Schema.Types.Mixed], default: [] },
 		profile: {
 			contact: { type: String, default: "" },
 			billingAddress: { type: String, default: "" },
