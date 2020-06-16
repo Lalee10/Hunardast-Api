@@ -25,7 +25,7 @@ export interface IOrderDb extends Document, Timestamp {
 	verified: boolean
 	product: IProductDb["_id"]
 	store: IStoreDb["_id"]
-	placedBy: IUserDb["_id"]
+	placedBy?: IUserDb["_id"]
 }
 
 const { ObjectId } = Schema.Types
@@ -47,7 +47,7 @@ export const orderSchema: Schema = new Schema(
 		verified: { type: Boolean, default: false },
 		store: { type: ObjectId, required: true, ref: "Store" },
 		product: { type: ObjectId, required: true, ref: "Product" },
-		placedBy: { type: ObjectId, required: true, ref: "User" },
+		placedBy: { type: ObjectId, ref: "User", default: null },
 	},
 	{ timestamps: true }
 )

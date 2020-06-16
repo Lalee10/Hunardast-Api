@@ -33,7 +33,7 @@ export const orderMutations: IMutationResolvers = {
 			...args.data,
 			product: product._id,
 			store: product.store,
-			placedBy: ctx.user._id,
+			placedBy: ctx.user?._id,
 		})
 
 		return await ctx.db.Order.findById(created._id)

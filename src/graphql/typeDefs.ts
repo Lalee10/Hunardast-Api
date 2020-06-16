@@ -71,7 +71,7 @@ const typeDefs = gql`
 		verified: Boolean!
 		product: Product!
 		store: Store!
-		placedBy: User!
+		placedBy: User
 		createdAt: Date!
 		updatedAt: Date!
 	}

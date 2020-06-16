@@ -113,7 +113,7 @@ export type IOrder = {
 	verified: Scalars["Boolean"]
 	product: IProduct
 	store: IStore
-	placedBy: IUser
+	placedBy?: Maybe<IUser>
 	createdAt: Scalars["Date"]
 	updatedAt: Scalars["Date"]
 }
@@ -504,7 +504,7 @@ export type IOrderResolvers<
 	verified?: Resolver<IResolversTypes["Boolean"], ParentType, ContextType>
 	product?: Resolver<IResolversTypes["Product"], ParentType, ContextType>
 	store?: Resolver<IResolversTypes["Store"], ParentType, ContextType>
-	placedBy?: Resolver<IResolversTypes["User"], ParentType, ContextType>
+	placedBy?: Resolver<Maybe<IResolversTypes["User"]>, ParentType, ContextType>
 	createdAt?: Resolver<IResolversTypes["Date"], ParentType, ContextType>
 	updatedAt?: Resolver<IResolversTypes["Date"], ParentType, ContextType>
 	__isTypeOf?: isTypeOfResolverFn<ParentType>
